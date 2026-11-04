@@ -40,7 +40,7 @@ export default function Home() {
         </div>
         <div className={styles.ctas}>
           <a
-            className={styles.primary}
+            className="button button--primary"
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
@@ -55,7 +55,7 @@ export default function Home() {
             Deploy Now
           </a>
           <a
-            className={styles.secondary}
+            className="button button--secondary"
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
             rel="noopener noreferrer"
