@@ -2,13 +2,13 @@
 
 Diet app is a nutrition app for searching foods and saving meals. Food data comes from [Fineli](https://fineli.fi/), the Finnish national food composition database.
 
-This repository is an early [Next.js](https://nextjs.org/) app. It uses the App Router and TypeScript. Later it will store meals in Postgres. Any Postgres server is fine. Accounts, food search, and saved meals are listed in the roadmap.
+The live app is at [diet-app-blond.vercel.app](https://diet-app-blond.vercel.app/).
 
 ## Roadmap
 
 - [x] Next.js + TypeScript starter
 - [x] Local Docker Postgres
-- [ ] Deploy to Vercel
+- [x] Deploy to Vercel
 - [ ] Authentication (invite-only / email)
 - [ ] Protect routes and API endpoints
 - [ ] Fineli API proxy (auth-required)
