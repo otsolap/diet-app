@@ -9,7 +9,7 @@ The live app is at [diet-app-blond.vercel.app](https://diet-app-blond.vercel.app
 - [x] Next.js + TypeScript starter
 - [x] Local Docker Postgres
 - [x] Deploy to Vercel
-- [ ] Authentication (invite-only / email)
+- [x] Authentication (invite-only / email)
 - [ ] Protect routes and API endpoints
 - [ ] Fineli API proxy (auth-required)
 - [ ] Food search and detail pages
@@ -52,7 +52,17 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Create a production build |
 | `npm run start` | Serve the production build |
 
-The app does not connect to a database yet. When it does, it will read `DATABASE_URL` from `.env`.
+The app reads `DATABASE_URL` from `.env`.
+
+## Accounts
+
+Sign-in is invite-only. People choose an email and a password. The app does not send email.
+
+Set `AUTH_SECRET` to a long random value. Set `AUTH_BOOTSTRAP_EMAIL` to the owner email. Add both on Vercel for Production and Preview.
+
+Open `/setup` once and create the owner password. Only that owner can open `/invite` and create a link for another email. An invite link works for 7 days.
+
+The app creates its tables on the first visit.
 
 
 

@@ -1,10 +1,26 @@
+import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { AuthStatus } from "./auth-status";
 import styles from "./page.module.css";
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        <Suspense
+          fallback={
+            <p className={styles.auth}>
+              <Link href="/login">Sign in</Link>
+            </p>
+          }
+        >
+          <AuthStatus searchParams={searchParams} />
+        </Suspense>
         <Image
           className={styles.logo}
           src="/next.svg"

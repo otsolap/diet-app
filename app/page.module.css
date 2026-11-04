@@ -40,6 +40,13 @@
 	color: var(--color-primary);
 }
 
+.auth {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--spacing-single);
+}
+
 .ctas {
 	display: flex;
 	flex-direction: row;
