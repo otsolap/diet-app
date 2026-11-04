@@ -1,3 +1,12 @@
+# diet-app
+
+Nutrition app. Next.js App Router and TypeScript.
+
+Follow the rules in `.grok/rules/`:
+
+- `maintainer.md` — planning and git
+- `css.md` — CSS
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
