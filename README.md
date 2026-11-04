@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Diet app
 
-## Getting Started
+Diet app is a nutrition app for searching foods and saving meals. Food data comes from [Fineli](https://fineli.fi/), the Finnish national food composition database.
 
-First, run the development server:
+This repository is an early [Next.js](https://nextjs.org/) app. It uses the App Router and TypeScript. Later it will store meals in Postgres. Any Postgres server is fine. Accounts, food search, and saved meals are listed in the roadmap.
+
+## Roadmap
+
+- [x] Next.js + TypeScript starter
+- [x] Local Docker Postgres
+- [ ] Deploy to Vercel
+- [ ] Authentication (invite-only / email)
+- [ ] Protect routes and API endpoints
+- [ ] Fineli API proxy (auth-required)
+- [ ] Food search and detail pages
+- [ ] Save foods / meals
+- [ ] Add TanStack Query
+- [ ] Polish and public launch
+
+
+## Fineli API
+
+The app will read food data from the Fineli API.
+
+- Components: https://fineli.fi/fineli/api/v1/components
+- Food search: https://fineli.fi/fineli/api/v1/foods?q=searchterm
+- Food by ID: https://fineli.fi/fineli/api/v1/foods/{id}
+
+Replace `searchterm` with the text to search for. Replace `{id}` with a Fineli food id.
+
+Values are normally per 100 g. Energy is given in kJ. Divide kJ by 4.184 to get kcal.
+
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20.9 or later
+- npm
+
+## Run the app
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run lint` | Run ESLint |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app does not connect to a database yet. When it does, it will read `DATABASE_URL` from `.env`.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
