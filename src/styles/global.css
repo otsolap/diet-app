@@ -15,8 +15,9 @@ html,
 body {
 	height: auto;
 	width: 100%;
-	color: var(--color-black);
-	background-color: var(--color-white);
+	color: var(--color-white);
+	background-color: var(--color-primary-dark);
+	color-scheme: dark;
 	scroll-behavior: smooth;
 	line-height: 1.5;
 }
@@ -27,7 +28,7 @@ main {
 	width: 100%;
 	max-width: 100%;
 	position: relative;
-	background-color: var(--color-white);
+	background-color: var(--color-primary-dark);
 }
 
 section {

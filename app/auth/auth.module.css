@@ -4,7 +4,6 @@
 	align-items: center;
 	justify-content: center;
 	padding: var(--spacing-single-half);
-	background-color: var(--color-white);
 }
 
 .card {
@@ -32,8 +31,18 @@
 	padding: 0 var(--spacing-three-quarters);
 	border: .0625rem solid var(--color-primary-light);
 	border-radius: .5rem;
-	background-color: var(--color-white);
-	color: var(--color-black);
+	background-color: var(--color-primary-semidark);
+	color: var(--color-white);
+}
+
+.field input::placeholder {
+	color: var(--color-primary-light);
+}
+
+.field input:-webkit-autofill {
+	-webkit-text-fill-color: var(--color-white);
+	caret-color: var(--color-white);
+	box-shadow: 0 0 0 62.5rem var(--color-primary-semidark) inset;
 }
 
 .submit {
@@ -41,11 +50,11 @@
 }
 
 .error {
-	color: var(--color-error-dark);
+	color: var(--color-error-light);
 }
 
 .note {
-	color: var(--color-primary);
+	color: var(--color-tertiary-light);
 }
 
 .link {

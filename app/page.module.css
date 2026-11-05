@@ -5,7 +5,6 @@
 	align-items: center;
 	justify-content: center;
 	min-height: 100vh;
-	background-color: var(--color-white);
 }
 
 .main {
@@ -17,7 +16,6 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: var(--spacing-double);
-	background-color: var(--color-white);
 	padding: var(--spacing-triple) var(--spacing-single-half);
 }
 
@@ -32,12 +30,10 @@
 .intro h1 {
 	max-width: 20rem;
 	letter-spacing: -.12rem;
-	color: var(--color-black);
 }
 
 .intro p {
 	max-width: 27.5rem;
-	color: var(--color-primary);
 }
 
 .auth {
