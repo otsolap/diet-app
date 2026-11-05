@@ -1,25 +1,25 @@
 :root {
-	/* Primary - Green */
-	--color-primary-dark: #143028;
-	--color-primary-semidark: #1e4638;
-	--color-primary: #2f6b4f;
-	--color-primary-light: #7aa58c;
+	/* Primary - Dark green */
+	--color-primary-dark: #0c382f;
+	--color-primary-semidark: #1b4336;
+	--color-primary: #325b44;
+	--color-primary-light: #77907e;
 
-	/* Secondary - Amber */
-	--color-secondary-dark: #8a4b12;
-	--color-secondary-semidark: #b86a1a;
-	--color-secondary: #d4892a; /* default */
-	--color-secondary-light: #e4b36a;
+	/* Secondary - Copper */
+	--color-secondary-dark: #7c4320;
+	--color-secondary-semidark: #994e25;
+	--color-secondary: #b86e34; /* default */
+	--color-secondary-light: #e4c4a8;
 
 	/* Tertiary - Teal */
-	--color-tertiary-dark: #0f5c62;
-	--color-tertiary: #1a7f88; /* default */
-	--color-tertiary-light: #4eacb4;
+	--color-tertiary-dark: #2f4a5a;
+	--color-tertiary: #4e7488; /* default */
+	--color-tertiary-light: #8aabba;
 
 	/* Text */
-	--color-black: #14241c;
-	--color-white: #f7f6f2;
-	--color-neutral-30: #8b948e;
+	--color-black: #0c382f;
+	--color-white: #f6f1ea;
+	--color-neutral-30: #738074;
 	--font-heading: var(--font-geist-sans), sans-serif;
 	--font-body: var(--font-geist-sans), sans-serif;
 	--line-height-heading: 1.2;
@@ -27,12 +27,12 @@
 	--line-height-body: 1.6;
 
 	/* Buttons */
-	--button-primary-bg: var(--color-secondary-semidark);
-	--button-primary-color: var(--color-black);
-	--button-primary-hover-bg: var(--color-secondary);
-	--button-secondary-bg: var(--color-tertiary-dark);
+	--button-primary-bg: var(--color-secondary);
+	--button-primary-color: var(--color-white);
+	--button-primary-hover-bg: var(--color-secondary-semidark);
+	--button-secondary-bg: var(--color-tertiary);
 	--button-secondary-color: var(--color-white);
-	--button-secondary-hover-bg: var(--color-tertiary);
+	--button-secondary-hover-bg: var(--color-tertiary-dark);
 
 	/* Success Colors */
 	--color-success-dark: #388e3c;

@@ -22,7 +22,7 @@
 
 .button--primary:hover,
 .button--primary:focus-visible {
-	background-color: var(--color-secondary-light);
+	background-color: var(--button-primary-hover-bg);
 }
 
 .button--secondary {
@@ -36,12 +36,13 @@
 }
 
 .button--tertiary {
+	color: var(--color-white);
 	background-color: var(--color-tertiary);
 }
 
 .button--tertiary:hover,
 .button--tertiary:focus-visible {
-	background-color: var(--color-tertiary-light);
+	background-color: var(--color-tertiary-dark);
 }
 
 .button--link {
