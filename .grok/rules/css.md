@@ -20,6 +20,19 @@ This project uses custom CSS. Follow these standards:
 
 ## Class names
 
+Component styles use CSS Modules. The file is the block. A modifier is its own class. Use camelCase.
+
+```tsx
+import styles from "./item.module.css";
+
+className={`${styles.item} ${current ? styles.itemCurrent : ""}`}
+```
+
+```css
+.item {}
+.itemCurrent {}
+```
+
 Global CSS in `src/styles` uses BEM. Write those class names as strings.
 
 ```tsx
@@ -31,19 +44,6 @@ className="button button--primary"
 .button--primary {}
 .button__icon {}
 ```
-
-CSS Modules use camelCase. The file is the block. A modifier is its own class.
-
-```tsx
-className={`${styles.item} ${current ? styles.itemCurrent : ""}`}
-```
-
-```css
-.item {}
-.itemCurrent {}
-```
-
-Do not use `__` or `--` in a CSS Module. `styles.item--current` is invalid JavaScript.
 
 ## Media Query Organization
 
