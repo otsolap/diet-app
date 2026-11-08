@@ -1,0 +1,118 @@
+.nav {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 50;
+	width: 100%;
+	text-align: center;
+	background-color: var(--color-primary-dark);
+	border-top: .125rem solid var(--color-white);
+}
+
+.bar {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.link,
+.toggle {
+	position: relative;
+	z-index: 10;
+	display: flex;
+	flex: 0 0 calc(100% / var(--mobile-nav-count));
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 5rem;
+	max-width: calc(100% / var(--mobile-nav-count));
+	height: 4rem;
+	padding: 0;
+	color: var(--color-white);
+	font-weight: 700;
+	text-align: center;
+	text-decoration-line: none;
+	cursor: pointer;
+	background-color: inherit;
+	border: .0625rem solid transparent;
+	transition: color 150ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.link:hover,
+.link:focus-visible,
+.toggle:hover,
+.toggle:focus-visible,
+.linkActive {
+	color: var(--color-secondary-semidark);
+	font-weight: 900;
+}
+
+.icon {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 1.875rem;
+	margin-top: var(--spacing-half);
+}
+
+.label {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	font-size: .75rem;
+	line-height: 1.625;
+}
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	width: 100%;
+	height: 100%;
+	padding-top: var(--spacing-quintuple);
+	background-color: var(--color-primary-dark);
+	transform: translateX(100%);
+	transition: transform .5s ease-in-out;
+}
+
+.sidebarOpen {
+	transform: translateX(0);
+}
+
+.list {
+	position: sticky;
+	z-index: 10;
+	width: inherit;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.item {
+	padding-top: var(--spacing-single);
+	padding-bottom: var(--spacing-single);
+	padding-left: var(--spacing-triple);
+	list-style: none;
+	border-bottom: .125rem solid var(--color-white);
+}
+
+.sidebarLink {
+	display: block;
+	width: inherit;
+	height: inherit;
+	color: var(--color-white);
+	font-size: 1.375rem;
+}
+
+/* Tablet styles */
+@media (width >= 768px) {
+	.nav,
+	.sidebar {
+		display: none;
+	}
+}

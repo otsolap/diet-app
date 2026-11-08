@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
+import { primaryButtonClass } from "@/src/components/button/button";
 import { findOpenInvite } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
 
@@ -61,7 +62,7 @@ async function AcceptForm({
             required
           />
         </label>
-        <button className={`button button--primary ${styles.submit}`} type="submit">
+        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
           Create account
         </button>
       </form>

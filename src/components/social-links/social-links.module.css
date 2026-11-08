@@ -1,0 +1,56 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-single);
+	margin: var(--spacing-single) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-three-quarters);
+	font-size: 1rem;
+	line-height: 1;
+	text-decoration-line: none;
+	transition: color .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.iconWrap {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+}
+
+.icon {
+	display: block;
+	width: 1.75rem;
+	height: 1.75rem;
+	background-color: currentColor;
+	mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+}
+
+.iconX {
+	width: 1.15rem;
+	height: 1.15rem;
+	mask-image: url("/icons/x-logo.svg");
+}
+
+.iconLinkedin {
+	mask-image: url("/icons/linkedin.svg");
+}
+
+.iconWeb {
+	mask-image: url("/icons/spider-web.svg");
+}
+
+.link:hover,
+.link:focus-visible {
+	color: var(--color-secondary);
+}

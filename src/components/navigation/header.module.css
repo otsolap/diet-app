@@ -1,0 +1,126 @@
+.header {
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	flex-shrink: 0;
+	background-color: var(--color-primary-dark);
+}
+
+.bar {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-half);
+	min-height: 5rem;
+	width: 100%;
+	padding-left: var(--spacing-half);
+	padding-right: var(--spacing-half);
+	background-color: var(--color-primary-dark);
+	border-bottom: .0625rem solid var(--color-white);
+}
+
+.cta {
+	flex: 0 0 auto;
+	align-self: center;
+	width: fit-content;
+	max-width: 12rem;
+	white-space: nowrap;
+}
+
+.nav,
+.slogan {
+	display: none;
+}
+
+.title {
+	margin-bottom: 0;
+	font-size: 1.25rem;
+	font-weight: 900;
+	text-shadow: .0625rem .0625rem .125rem var(--color-primary-dark);
+}
+
+/* Tablet styles */
+@media (width >= 768px) {
+	.bar {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 0;
+	}
+
+	.ctaBar {
+		display: none;
+	}
+
+	.brand {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--spacing-double);
+		width: 100%;
+		max-width: var(--container-desktop);
+		margin-right: auto;
+		margin-left: auto;
+		padding: var(--spacing-half) var(--spacing-double);
+	}
+
+	.slogan {
+		display: block;
+		margin-bottom: 0;
+		font-weight: 600;
+		text-shadow: .0625rem .0625rem .125rem var(--color-primary-dark);
+	}
+
+	.nav {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		padding: var(--spacing-half);
+		background-color: var(--color-primary-dark);
+		border-bottom: .0625rem solid var(--color-white);
+	}
+
+	.navInner {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-double);
+		width: 100%;
+		max-width: var(--container-desktop);
+		margin: 0 auto;
+		padding-left: var(--spacing-double);
+		padding-right: var(--spacing-double);
+	}
+
+	.menu {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--spacing-double);
+	}
+
+	.link {
+		text-shadow: .0625rem .0625rem .125rem var(--color-primary-dark);
+		transition: color 150ms cubic-bezier(.4, 0, .2, 1);
+	}
+
+	.link:hover,
+	.link:focus-visible,
+	.linkActive {
+		color: var(--color-secondary-semidark);
+		font-weight: 900;
+	}
+}
+
+/* Desktop styles */
+@media (width >= 1280px) {
+	.title {
+		font-size: 2.5rem;
+	}
+
+	.link {
+		font-size: 2rem;
+	}
+}
