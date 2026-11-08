@@ -57,7 +57,13 @@ function ensureSchema() {
       SELECT id FROM users ORDER BY created_at ASC, id ASC LIMIT 1
     )
     AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner = true);
-  `).then(() => undefined);
+  `).then(
+    () => undefined,
+    (error: unknown) => {
+      schemaReady = null;
+      throw error;
+    },
+  );
 
   return schemaReady;
 }
