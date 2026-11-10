@@ -57,6 +57,25 @@ function ensureSchema() {
       SELECT id FROM users ORDER BY created_at ASC, id ASC LIMIT 1
     )
     AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner = true);
+
+    CREATE TABLE IF NOT EXISTS fineli_food (
+      id integer PRIMARY KEY,
+      name_en text NOT NULL,
+      name_fi text NOT NULL,
+      name_sv text NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS fineli_component_value (
+      food_id integer NOT NULL REFERENCES fineli_food (id) ON DELETE CASCADE,
+      component text NOT NULL,
+      value numeric,
+      PRIMARY KEY (food_id, component)
+    );
+
+    CREATE TABLE IF NOT EXISTS fineli_release (
+      release text PRIMARY KEY,
+      loaded_at timestamptz NOT NULL DEFAULT now()
+    );
   `).then(
     () => undefined,
     (error: unknown) => {
