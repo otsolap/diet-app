@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { primaryButtonClass } from "@/src/components/button/button";
+import { getCurrentUser } from "@/src/lib/auth";
 import { site } from "@/src/lib/site";
 import {
   HeaderCta,
@@ -10,8 +11,50 @@ import {
 } from "@/src/components/navigation/header-nav";
 import styles from "./header.module.css";
 
-const barCtaClass = `${primaryButtonClass} ${styles.cta} ${styles.ctaBar}`;
-const navCtaClass = `${primaryButtonClass} ${styles.cta}`;
+const buttonClass = `${primaryButtonClass} ${styles.cta}`;
+
+async function HeaderAccount({ className }: { className: string }) {
+  let user = null;
+
+  try {
+    user = await getCurrentUser();
+  } catch {
+    user = null;
+  }
+
+  if (!user) {
+    return <HeaderCta className={className} />;
+  }
+
+  return (
+    <>
+      <span className={styles.email} title={user.email}>
+        {user.email}
+      </span>
+      <form action="/api/auth/logout" method="post">
+        <button className={className} type="submit">
+          Log out
+        </button>
+      </form>
+    </>
+  );
+}
+
+function AccountSlot({
+  className,
+  slotClassName,
+}: {
+  className: string;
+  slotClassName: string;
+}) {
+  return (
+    <div className={slotClassName}>
+      <Suspense fallback={<HeaderCtaFallback className={className} />}>
+        <HeaderAccount className={className} />
+      </Suspense>
+    </div>
+  );
+}
 
 export function Header() {
   const { title, slogan, links, callToAction } = site.header;
@@ -26,9 +69,7 @@ export function Header() {
           </Link>
           {slogan ? <p className={styles.slogan}>{slogan}</p> : null}
         </div>
-        <Suspense fallback={<HeaderCtaFallback className={barCtaClass} />}>
-          <HeaderCta className={barCtaClass} />
-        </Suspense>
+        <AccountSlot className={buttonClass} slotClassName={`${styles.account} ${styles.accountBar}`} />
       </header>
       {menuLinks.length > 0 || callToAction ? (
         <nav className={styles.nav} aria-label="Primary">
@@ -36,9 +77,7 @@ export function Header() {
             <Suspense fallback={<HeaderMenuFallback links={menuLinks} />}>
               <HeaderMenu links={menuLinks} />
             </Suspense>
-            <Suspense fallback={<HeaderCtaFallback className={navCtaClass} />}>
-              <HeaderCta className={navCtaClass} />
-            </Suspense>
+            <AccountSlot className={buttonClass} slotClassName={styles.account} />
           </div>
         </nav>
       ) : null}

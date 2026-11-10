@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
+import { redirect } from "next/navigation";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
 import { primaryButtonClass } from "@/src/components/button/button";
-import { countUsers } from "@/src/lib/auth";
+import { countUsers, getCurrentUser } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
 
 export const metadata = {
@@ -21,6 +22,18 @@ async function LoginForm({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   await connection();
+  let user = null;
+
+  try {
+    user = await getCurrentUser();
+  } catch {
+    user = null;
+  }
+
+  if (user) {
+    redirect("/");
+  }
+
   const params = await searchParams;
   const message = errorMessage(firstCode(params.error));
   const openSetup = (await countUsers()) === 0;

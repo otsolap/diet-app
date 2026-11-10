@@ -28,6 +28,23 @@
 	white-space: nowrap;
 }
 
+.account {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: var(--spacing-half);
+	min-width: 0;
+}
+
+.email {
+	overflow: hidden;
+	max-width: 8rem;
+	color: var(--color-secondary-light);
+	font-size: .875rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .nav,
 .slogan {
 	display: none;
@@ -48,8 +65,13 @@
 		padding: 0;
 	}
 
-	.ctaBar {
+	.ctaBar,
+	.accountBar {
 		display: none;
+	}
+
+	.email {
+		max-width: 18rem;
 	}
 
 	.brand {

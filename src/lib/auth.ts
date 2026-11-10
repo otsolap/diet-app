@@ -1,4 +1,5 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { NextResponse } from "next/server";
@@ -128,7 +129,7 @@ export async function requireUser() {
   return user;
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) {
@@ -149,7 +150,7 @@ export async function getCurrentUser() {
   }
 
   return { id: user.id, email: user.email, isOwner: user.is_owner };
-}
+});
 
 export async function readSessionToken() {
   const jar = await cookies();

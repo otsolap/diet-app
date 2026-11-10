@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { SocialLinks } from "@/src/components/social-links/social-links";
+import { getCurrentUser } from "@/src/lib/auth";
 import { site, type SiteLink } from "@/src/lib/site";
 import styles from "./footer.module.css";
 
@@ -27,7 +28,7 @@ function FooterAnchor({ link, className }: { link: SiteLink; className: string }
 }
 
 function SubFooter({ year }: { year?: number }) {
-  const { title, link } = site.footer.subFooter;
+  const { title, credit, fineli, license } = site.footer.subFooter;
 
   return (
     <div className={styles.sub}>
@@ -37,7 +38,11 @@ function SubFooter({ year }: { year?: number }) {
           {year ? ` © ${year}` : null}
         </span>
         <span className={styles.pipe}> | </span>
-        <FooterAnchor className={styles.legal} link={link} />
+        <span className={styles.legal}>
+          {credit} <FooterAnchor className={styles.legal} link={fineli} />
+          {", "}
+          <FooterAnchor className={styles.legal} link={license} />
+        </span>
       </div>
     </div>
   );
@@ -49,6 +54,32 @@ async function SubFooterYear() {
   return <SubFooter year={new Date().getFullYear()} />;
 }
 
+function PageLinks({ links }: { links: SiteLink[] }) {
+  return (
+    <div className={styles.links}>
+      {links.map((link) => (
+        <FooterAnchor key={link.href} className={styles.link} link={link} />
+      ))}
+    </div>
+  );
+}
+
+async function FooterPageLinks() {
+  let user = null;
+
+  try {
+    user = await getCurrentUser();
+  } catch {
+    user = null;
+  }
+
+  const links = user
+    ? site.footer.pages.links.filter((link) => link.href !== "/login")
+    : site.footer.pages.links;
+
+  return <PageLinks links={links} />;
+}
+
 export function Footer() {
   const { pages, brand } = site.footer;
 
@@ -57,11 +88,9 @@ export function Footer() {
       <div className={styles.columns}>
         <div className={styles.column}>
           <h3 className={styles.heading}>{pages.title}</h3>
-          <div className={styles.links}>
-            {pages.links.map((link) => (
-              <FooterAnchor key={link.href} className={styles.link} link={link} />
-            ))}
-          </div>
+          <Suspense fallback={<PageLinks links={pages.links} />}>
+            <FooterPageLinks />
+          </Suspense>
         </div>
         <div className={styles.column}>
           <h3 className={styles.heading}>{brand.title}</h3>

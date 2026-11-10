@@ -12,6 +12,7 @@ export const site = {
     slogan: "Search foods. Save meals.",
     links: [
       { href: "/", title: "Home" },
+      { href: "/foods", title: "Foods" },
       { href: "/about", title: "About" },
     ] satisfies SiteLink[],
     callToAction: { href: "/login", title: "Sign in" } satisfies SiteLink,
@@ -21,6 +22,7 @@ export const site = {
       title: "Pages",
       links: [
         { href: "/", title: "Home" },
+        { href: "/foods", title: "Foods" },
         { href: "/about", title: "About" },
         { href: "/login", title: "Sign in" },
       ] satisfies SiteLink[],
@@ -32,9 +34,15 @@ export const site = {
     },
     subFooter: {
       title: "Diet app",
-      link: {
+      credit: "Food data: Finnish Institute for Health and Welfare,",
+      fineli: {
         href: "https://fineli.fi/",
         title: "Fineli",
+        isExternal: true,
+      } satisfies SiteLink,
+      license: {
+        href: "https://creativecommons.org/licenses/by/4.0/",
+        title: "CC BY 4.0",
         isExternal: true,
       } satisfies SiteLink,
     },
