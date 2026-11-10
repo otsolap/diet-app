@@ -10,35 +10,46 @@ The live app is at [diet-app-blond.vercel.app](https://diet-app-blond.vercel.app
 - [x] Local Docker Postgres
 - [x] Deploy to Vercel
 - [x] Authentication (invite-only / email)
-- [x] Protect routes and API endpoints
-- [x] Fineli API proxy (auth-required)
-- [ ] Food search and detail pages
+- [x] Protect private pages
+- [x] Fineli food data in Postgres
+- [x] Food search and detail pages
 - [ ] Save foods / meals
 - [ ] Add TanStack Query
 - [ ] Polish and public launch
 
+## Food data
 
-## Fineli API
+The app stores Fineli basic package 1 in Postgres. Git does not store the package.
 
-The app will read food data from the Fineli API.
+Download basic package 1 from the [Fineli open data page](https://fineli.fi/fineli/en/avoin-data). Open that page in a browser. Choose "Basic package 1". The browser downloads a zip. The current package is release 20.
 
-- Components: https://fineli.fi/fineli/api/v1/components
-- Food search: https://fineli.fi/fineli/api/v1/foods?q=searchterm
-- Food by ID: https://fineli.fi/fineli/api/v1/foods/{id}
+Save the zip here, and leave it zipped:
 
-Replace `searchterm` with the text to search for. Replace `{id}` with a Fineli food id.
+`data/fineli/Fineli_Rel20.zip`
 
-The app proxies those calls. Only a signed-in user can call the proxy.
+Rename the file if the browser used another name. Git ignores it.
 
-- Components: `/api/fineli/components`
-- Food search: `/api/fineli/foods?q=searchterm`
-- Food by ID: `/api/fineli/foods/{id}`
+Load the local database once:
 
-A call without a session returns 401. The server reuses a successful Fineli response for a week. The session is checked on every call.
+```bash
+npm run fineli:import
+```
 
-These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, and `/invite/{token}`. Other pages redirect to `/login`. Other API routes return 401, except sign-in, setup, accept, and sign-out.
+The command reads `DATABASE_URL` from `.env`. It unzips the package in a temporary folder, loads Postgres, and deletes that folder. When a new package arrives, save it with the same file name and run the command again.
 
-Values are normally per 100 g. Energy is given in kJ. Divide kJ by 4.184 to get kcal.
+To load the production database, copy `DATABASE_URL` from the Vercel project settings. Run the same command with that URL. Do not save the production URL in the project.
+
+```bash
+DATABASE_URL='paste-the-production-url' npm run fineli:import
+```
+
+Search is at `/foods`. One food is at `/foods/{id}`. Both pages are public. Values are per 100 g. The package stores energy in kJ. The pages show kcal as kJ divided by 4.184.
+
+Food data: Finnish Institute for Health and Welfare, [Fineli](https://fineli.fi/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## Access
+
+These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, `/foods`, `/foods/{id}`, and `/invite/{token}`. Other pages redirect to `/login`.
 
 
 ## Prerequisites
