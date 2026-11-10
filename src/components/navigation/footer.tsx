@@ -39,9 +39,9 @@ function SubFooter({ year }: { year?: number }) {
         </span>
         <span className={styles.pipe}> | </span>
         <span className={styles.legal}>
-          {credit} <FooterAnchor className={styles.legal} link={fineli} />
+          {credit} <FooterAnchor className={styles.legalLink} link={fineli} />
           {", "}
-          <FooterAnchor className={styles.legal} link={license} />
+          <FooterAnchor className={styles.legalLink} link={license} />
         </span>
       </div>
     </div>

@@ -3,6 +3,7 @@
 	top: 0;
 	z-index: 50;
 	flex-shrink: 0;
+	margin-bottom: var(--spacing-triple);
 	background-color: var(--color-primary-dark);
 }
 

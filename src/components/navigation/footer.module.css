@@ -3,7 +3,7 @@
 	flex-direction: column;
 	flex-shrink: 0;
 	width: 100%;
-	margin: 0 auto;
+	margin: var(--spacing-triple) auto 0;
 	padding-bottom: var(--spacing-quintuple);
 	background-color: var(--color-primary-dark);
 	border-top: .0625rem solid var(--color-white);
@@ -47,9 +47,14 @@
 }
 
 .link,
-.legal {
+.legal,
+.legalLink {
 	font-size: 1rem;
 	transition: color .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.legalLink {
+	font-weight: inherit;
 }
 
 .link {
@@ -60,8 +65,8 @@
 
 .link:hover,
 .link:focus-visible,
-.legal:hover,
-.legal:focus-visible {
+.legalLink:hover,
+.legalLink:focus-visible {
 	color: var(--color-secondary);
 }
 
