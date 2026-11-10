@@ -56,19 +56,17 @@ function FoodPages({
   term,
   page,
   pageCount,
-  label,
 }: {
   term: string;
   page: number;
   pageCount: number;
-  label: string;
 }) {
   if (pageCount <= 1) {
     return null;
   }
 
   return (
-    <nav className={styles.pages} aria-label={label}>
+    <nav className={styles.pages} aria-label="Pages">
       {page > 1 ? (
         <Link className={styles.pageLink} href={pageHref(term, page - 1)}>
           Previous
@@ -146,9 +144,8 @@ async function FoodSearch({
       {foods.length > 0 ? (
         <>
           <p className={styles.count}>{countLabel(total, page)}</p>
-          <FoodPages term={term} page={page} pageCount={pageCount} label="Pages" />
           <FoodList foods={foods} />
-          <FoodPages term={term} page={page} pageCount={pageCount} label="Pages after the list" />
+          <FoodPages term={term} page={page} pageCount={pageCount} />
         </>
       ) : null}
       {term && !error && foods.length === 0 ? <p>No foods match that search.</p> : null}
