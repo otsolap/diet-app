@@ -81,15 +81,103 @@
 
 .item:hover .name,
 .item:focus-visible .name,
-.back:hover,
-.back:focus-visible,
+.crumbLink:hover,
+.crumbLink:focus-visible,
 .pageLink:hover,
 .pageLink:focus-visible {
 	color: var(--color-secondary);
 }
 
-.back {
+.breadcrumb {
+	min-width: 0;
+}
+
+.crumbList {
+	min-width: 0;
+	list-style: none;
+}
+
+.crumbItem {
+	display: inline;
+}
+
+.crumbItem + .crumbItem::before {
+	content: "/";
+	margin-right: var(--spacing-half);
+	margin-left: var(--spacing-half);
 	color: var(--color-tertiary-light);
+}
+
+.crumbLink {
+	color: var(--color-tertiary-light);
+}
+
+.crumbCurrent {
+	color: var(--color-white);
+	overflow-wrap: break-word;
+}
+
+.detail {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--spacing-double);
+	width: 100%;
+	min-width: 0;
+}
+
+.chart {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--spacing-single);
+	margin: 0;
+}
+
+.chartTitle {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--color-white);
+}
+
+.pie {
+	width: 11rem;
+	height: 11rem;
+	border-radius: 50%;
+}
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--spacing-single);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.legendItem {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-half);
+}
+
+.swatch {
+	width: .75rem;
+	height: .75rem;
+	border-radius: 50%;
+}
+
+.swatchFat {
+	background-color: var(--color-secondary);
+}
+
+.swatchProtein {
+	background-color: var(--color-tertiary-light);
+}
+
+.swatchCarbs {
+	background-color: var(--color-white);
 }
 
 .foodId {
@@ -194,5 +282,19 @@
 	.amount,
 	.share {
 		width: 7rem;
+	}
+
+	.detail {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--spacing-triple);
+	}
+
+	.nutrients {
+		flex: 1;
+	}
+
+	.chart {
+		flex-shrink: 0;
 	}
 }
