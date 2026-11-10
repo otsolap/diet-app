@@ -4,11 +4,7 @@ const SEARCH_LIMIT = 80;
 const KJ_PER_KCAL = 4.184;
 export const FOOD_PAGE_SIZE = 20;
 
-const FOOD_NAME_SQL = `COALESCE(
-  NULLIF(btrim(f.name_en), ''),
-  NULLIF(btrim(f.name_fi), ''),
-  NULLIF(btrim(f.name_sv), '')
-)`;
+const FOOD_NAME_SQL = `NULLIF(btrim(f.name_en), '')`;
 
 const FOOD_MATCH_SQL = `(
   strpos(lower(f.name_en), lower($1)) > 0
@@ -29,12 +25,12 @@ export type FoodSearchResult =
 export type FoodNutrient = {
   label: string;
   amount: string;
+  share: string | null;
 };
 
 export type FoodDetail = {
   id: number;
   name: string;
-  otherNames: string[];
   kcal: number | null;
   nutrients: FoodNutrient[];
 };
@@ -42,14 +38,9 @@ export type FoodDetail = {
 export type FoodDetailResult = { food: FoodDetail } | { missing: true } | { error: string };
 
 const DETAIL_NUTRIENTS = [
-  { code: "ENERC", label: "Energy", unit: "kJ" },
-  { code: "FAT", label: "Fat", unit: "g" },
-  { code: "FASAT", label: "Saturated fat", unit: "g" },
-  { code: "CHOAVL", label: "Carbohydrate", unit: "g" },
-  { code: "SUGAR", label: "Sugars", unit: "g" },
-  { code: "FIBC", label: "Fibre", unit: "g" },
-  { code: "PROT", label: "Protein", unit: "g" },
-  { code: "NACL", label: "Salt", unit: "mg" },
+  { code: "FAT", label: "Fat", kcalPerGram: 9 },
+  { code: "PROT", label: "Protein", kcalPerGram: 4 },
+  { code: "CHOAVL", label: "Carbs", kcalPerGram: 4 },
 ] as const;
 
 type ReadyRow = {
@@ -69,8 +60,6 @@ type FoodRow = {
 type FoodNameRow = {
   id: number;
   name_en: string;
-  name_fi: string;
-  name_sv: string;
   energy_kj: string | null;
 };
 
@@ -79,25 +68,7 @@ type NutrientRow = {
   value: string | null;
 };
 
-function displayName(english: string, finnish: string, swedish: string) {
-  return english.trim() || finnish.trim() || swedish.trim();
-}
-
-function otherNames(title: string, names: string[]) {
-  const seen = new Set([title.toLowerCase()]);
-  return names.flatMap((name) => {
-    const trimmed = name.trim();
-    const key = trimmed.toLowerCase();
-    if (!trimmed || seen.has(key)) {
-      return [];
-    }
-
-    seen.add(key);
-    return [trimmed];
-  });
-}
-
-function amountLabel(value: string | null, unit: string) {
+function grams(value: string | null) {
   if (value === null) {
     return null;
   }
@@ -107,8 +78,20 @@ function amountLabel(value: string | null, unit: string) {
     return null;
   }
 
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(number);
-  return `${text} ${unit}`;
+  return number;
+}
+
+function amountLabel(value: number) {
+  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
+  return `${text} g`;
+}
+
+function shareLabel(value: number, kcalPerGram: number, kcal: number | null) {
+  if (kcal === null || kcal <= 0) {
+    return null;
+  }
+
+  return `${Math.round((value * kcalPerGram * 100) / kcal)}%`;
 }
 
 function kcalFromKj(value: string | null) {
@@ -225,8 +208,6 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
       `SELECT
          f.id,
          f.name_en,
-         f.name_fi,
-         f.name_sv,
          v.value AS energy_kj
        FROM fineli_food f
        LEFT JOIN fineli_component_value v
@@ -239,7 +220,7 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
       return { missing: true };
     }
 
-    const name = displayName(row.name_en, row.name_fi, row.name_sv);
+    const name = row.name_en.trim();
     if (!name) {
       return { missing: true };
     }
@@ -251,16 +232,26 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
       [id, DETAIL_NUTRIENTS.map((item) => item.code)],
     );
     const byCode = new Map(values.rows.map((item) => [item.component, item.value]));
+    const kcal = kcalFromKj(row.energy_kj);
 
     return {
       food: {
         id: row.id,
         name,
-        otherNames: otherNames(name, [row.name_fi, row.name_sv]),
-        kcal: kcalFromKj(row.energy_kj),
+        kcal,
         nutrients: DETAIL_NUTRIENTS.flatMap((item) => {
-          const amount = amountLabel(byCode.get(item.code) ?? null, item.unit);
-          return amount ? [{ label: item.label, amount }] : [];
+          const value = grams(byCode.get(item.code) ?? null);
+          if (value === null) {
+            return [];
+          }
+
+          return [
+            {
+              label: item.label,
+              amount: amountLabel(value),
+              share: shareLabel(value, item.kcalPerGram, kcal),
+            },
+          ];
         }),
       },
     };

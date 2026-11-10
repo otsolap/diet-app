@@ -31,25 +31,37 @@ function FoodView({ food }: { food: FoodDetail }) {
         Foods
       </Link>
       <h1 className={styles.title}>{food.name}</h1>
-      {food.otherNames.length > 0 ? (
-        <p className={styles.otherNames}>
-          {food.otherNames.map((name) => (
-            <span key={name}>{name}</span>
-          ))}
-        </p>
-      ) : null}
+      <p className={styles.foodId}>Id {food.id}</p>
       <p className={styles.kcal}>
         {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}
       </p>
       {food.nutrients.length > 0 ? (
-        <dl className={styles.nutrients}>
-          {food.nutrients.map((item) => (
-            <div className={styles.nutrient} key={item.label}>
-              <dt>{item.label}</dt>
-              <dd className={styles.amount}>{item.amount}</dd>
-            </div>
-          ))}
-        </dl>
+        <table className={styles.nutrients}>
+          <thead>
+            <tr>
+              <th className={styles.heading} scope="col">
+                Macro
+              </th>
+              <th className={styles.headingValue} scope="col">
+                Grams
+              </th>
+              <th className={styles.headingValue} scope="col">
+                Percent
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {food.nutrients.map((item) => (
+              <tr key={item.label}>
+                <th className={styles.macro} scope="row">
+                  {item.label}
+                </th>
+                <td className={styles.amount}>{item.amount}</td>
+                <td className={styles.share}>{item.share}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : null}
     </main>
   );

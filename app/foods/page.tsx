@@ -14,7 +14,7 @@ function firstValue(value: string | string[] | undefined) {
 }
 
 function energyLabel(kcal: number) {
-  return `${new Intl.NumberFormat("en").format(kcal)} kcal per 100 g`;
+  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
 }
 
 function pageNumber(value: string | undefined) {
