@@ -15,7 +15,7 @@ function hasSession(request: NextRequest) {
 }
 
 function isPublicPage(pathname: string) {
-  if (PUBLIC_PAGES.has(pathname)) {
+  if (PUBLIC_PAGES.has(pathname) || pathname === "/foods" || /^\/foods\/[^/]+$/.test(pathname)) {
     return true;
   }
 
