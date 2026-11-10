@@ -14,6 +14,7 @@ const messages: Record<string, string> = {
   origin: "The form was sent from another site.",
   auth: "Sign in to invite someone.",
   owner: "Only the owner can invite someone.",
+  signedout: "Sign in to continue.",
 };
 
 export function errorMessage(code: string | undefined) {
@@ -22,6 +23,10 @@ export function errorMessage(code: string | undefined) {
   }
 
   return messages[code] ?? null;
+}
+
+export function unauthorized() {
+  return Response.json({ error: messages.signedout }, { status: 401 });
 }
 
 export function isSameOrigin(request: Request) {

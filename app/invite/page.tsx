@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
 import { primaryButtonClass } from "@/src/components/button/button";
-import { findOpenInvite, getCurrentUser } from "@/src/lib/auth";
+import { findOpenInvite, requireUser } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
 
 export const metadata = {
@@ -23,10 +23,7 @@ async function InviteForm({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   await connection();
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect("/login");
-  }
+  const user = await requireUser();
 
   if (!user.isOwner) {
     redirect("/");

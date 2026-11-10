@@ -1,10 +1,10 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import type { NextResponse } from "next/server";
 import { query, withTransaction } from "@/src/lib/db";
 import { hashPassword, verifyPassword } from "@/src/lib/passwords";
-
-const SESSION_COOKIE = "diet_session";
+import { SESSION_COOKIE } from "@/src/lib/session-cookie";
 const SESSION_DAYS = 30;
 const INVITE_DAYS = 7;
 const MIN_PASSWORD_LENGTH = 12;
@@ -117,6 +117,15 @@ async function createSession(userId: string) {
 export async function countUsers() {
   const result = await query<{ count: string }>("SELECT count(*)::text AS count FROM users");
   return Number(result.rows[0]?.count ?? 0);
+}
+
+export async function requireUser() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login?error=signedout");
+  }
+
+  return user;
 }
 
 export async function getCurrentUser() {
