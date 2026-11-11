@@ -85,5 +85,11 @@ Open `/setup` once and create the owner password. Only that owner can open `/inv
 
 The app creates its tables on the first visit.
 
+## License
+
+The application code is [MIT](LICENSE). Copyright (c) 2026 [Otso Lappalainen](https://varangianventure.com/).
+
+The Fineli food data is not part of that license. Food data: Finnish Institute for Health and Welfare, [Fineli](https://fineli.fi/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
 
 
