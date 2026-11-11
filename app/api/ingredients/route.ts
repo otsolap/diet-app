@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/src/lib/auth";
 import { foodId } from "@/src/lib/food-search";
 import { isSameOrigin, readForm, redirectTo } from "@/src/lib/http";
-import { saveIngredient } from "@/src/lib/ingredients";
+import { removeIngredient, saveIngredient } from "@/src/lib/ingredients";
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) {
@@ -15,6 +15,14 @@ export async function POST(request: Request) {
 
   const field = await readForm(request);
   const id = foodId(field("foodId"));
+  if (field("intent") === "remove") {
+    if (id !== null) {
+      await removeIngredient(user.id, id);
+    }
+
+    return redirectTo(request, "/saved");
+  }
+
   if (id === null) {
     return redirectTo(request, "/foods");
   }

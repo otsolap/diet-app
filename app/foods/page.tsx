@@ -3,7 +3,9 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { primaryButtonClass } from "@/src/components/button/button";
 import { FoodList } from "@/src/components/food-list/food-list";
+import { getCurrentUser } from "@/src/lib/auth";
 import { FOOD_PAGE_SIZE, searchFoods } from "@/src/lib/food-search";
+import { listSavedFoodIds } from "@/src/lib/ingredients";
 import styles from "./foods.module.css";
 
 export const metadata = {
@@ -47,6 +49,19 @@ function countLabel(total: number, page: number) {
   }
 
   return `${start}–${end} of ${total} foods`;
+}
+
+async function savedFoodIds() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return new Set<number>();
+    }
+
+    return new Set(await listSavedFoodIds(user.id));
+  } catch {
+    return new Set<number>();
+  }
 }
 
 function FoodPages({
@@ -100,6 +115,7 @@ async function FoodSearch({
   const total = result && "total" in result ? result.total : 0;
   const page = result && "page" in result ? result.page : 1;
   const pageCount = result && "pageCount" in result ? result.pageCount : 0;
+  const savedIds = await savedFoodIds();
 
   return (
     <main className={styles.page}>
@@ -124,7 +140,7 @@ async function FoodSearch({
       {foods.length > 0 ? (
         <>
           <p className={styles.count}>{countLabel(total, page)}</p>
-          <FoodList foods={foods} />
+          <FoodList foods={foods} savedIds={savedIds} />
           <FoodPages term={term} page={page} pageCount={pageCount} />
         </>
       ) : null}

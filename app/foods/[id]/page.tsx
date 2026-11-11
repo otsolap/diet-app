@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { primaryButtonClass } from "@/src/components/button/button";
+import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
 import { getCurrentUser } from "@/src/lib/auth";
 import { foodId, getFood, type FoodDetail, type FoodNutrient } from "@/src/lib/food-search";
 import { isIngredientSaved } from "@/src/lib/ingredients";
@@ -204,7 +205,10 @@ function FoodView({
   return (
     <main className={styles.page}>
       <FoodCrumb current={food.name} />
-      <h1 className={styles.title}>{food.name}</h1>
+      <div className={styles.titleRow}>
+        <FoodCategoryIcon category={food.foodUseClass} className={styles.categoryIcon} />
+        <h1 className={styles.title}>{food.name}</h1>
+      </div>
       <p className={styles.foodId}>Id {food.id}</p>
       <p className={styles.kcal}>
         {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}

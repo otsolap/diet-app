@@ -19,10 +19,44 @@
 	list-style: none;
 }
 
+.entry {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: var(--spacing-half);
+	border-bottom: .0625rem solid var(--color-primary);
+}
+
+.entry .item {
+	flex: 1 1 12rem;
+	border-bottom: 0;
+}
+
+.removeForm {
+	display: flex;
+	flex: 0 0 auto;
+	width: fit-content;
+}
+
+.remove {
+	padding: var(--spacing-half) var(--spacing-single);
+	border: 0;
+	border-radius: 1rem;
+	background-color: transparent;
+	color: var(--color-secondary-light);
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.remove:hover,
+.remove:focus-visible {
+	color: var(--color-secondary);
+}
+
 .item {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 6rem 5.5rem;
-	align-items: baseline;
+	grid-template-columns: 1.5rem minmax(0, 1fr) 6rem 5.5rem;
+	align-items: center;
 	column-gap: var(--spacing-half);
 	min-width: 0;
 	padding: var(--spacing-single) 0;
@@ -31,7 +65,22 @@
 }
 
 .itemWithId {
-	grid-template-columns: 3.5rem minmax(0, 1fr) 6rem 5.5rem;
+	grid-template-columns: 3.5rem 1.5rem minmax(0, 1fr) 6rem 5.5rem;
+}
+
+.icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	color: var(--color-secondary-light);
+}
+
+.icon svg {
+	display: block;
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 .name {
@@ -65,28 +114,30 @@
 }
 
 .item:hover .name,
-.item:focus-visible .name {
+.item:focus-visible .name,
+.item:hover .icon,
+.item:focus-visible .icon {
 	color: var(--color-secondary);
 }
 
 /* Tablet styles */
 @media (width >= 640px) {
 	.item {
-		grid-template-columns: minmax(0, 1fr) 12rem 9rem;
+		grid-template-columns: 1.5rem minmax(0, 1fr) 12rem 9rem;
 	}
 
 	.itemWithId {
-		grid-template-columns: 4rem minmax(0, 1fr) 12rem 9rem;
+		grid-template-columns: 4rem 1.5rem minmax(0, 1fr) 12rem 9rem;
 	}
 }
 
 /* Laptop styles */
 @media (width >= 1024px) {
 	.item {
-		grid-template-columns: minmax(0, 1fr) 16rem 9rem;
+		grid-template-columns: 1.5rem minmax(0, 1fr) 16rem 9rem;
 	}
 
 	.itemWithId {
-		grid-template-columns: 4rem minmax(0, 1fr) 16rem 9rem;
+		grid-template-columns: 4rem 1.5rem minmax(0, 1fr) 16rem 9rem;
 	}
 }

@@ -9,6 +9,28 @@
 	gap: var(--spacing-single);
 }
 
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-half);
+}
+
+.categoryIcon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	color: var(--color-secondary-light);
+}
+
+.categoryIcon svg {
+	display: block;
+	width: 2.5rem;
+	height: 2.5rem;
+}
+
 .title {
 	margin-bottom: 0;
 }

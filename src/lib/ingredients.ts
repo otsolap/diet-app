@@ -63,6 +63,17 @@ export async function listSavedIngredients(userId: string) {
   });
 }
 
+export async function listSavedFoodIds(userId: string) {
+  const result = await query<{ food_id: number }>(
+    `SELECT food_id
+     FROM saved_ingredient
+     WHERE user_id = $1`,
+    [userId],
+  );
+
+  return result.rows.map((row) => row.food_id);
+}
+
 export async function isIngredientSaved(userId: string, foodId: number) {
   const result = await query(
     `SELECT 1 AS saved
@@ -88,4 +99,12 @@ export async function saveIngredient(userId: string, foodId: number) {
   );
 
   return "saved" as const;
+}
+
+export async function removeIngredient(userId: string, foodId: number) {
+  await query(
+    `DELETE FROM saved_ingredient
+     WHERE user_id = $1 AND food_id = $2`,
+    [userId, foodId],
+  );
 }

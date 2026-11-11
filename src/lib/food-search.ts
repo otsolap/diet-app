@@ -34,6 +34,7 @@ export type FoodDetail = {
   id: number;
   name: string;
   kcal: number | null;
+  foodUseClass: string | null;
   nutrients: FoodNutrient[];
 };
 
@@ -65,6 +66,7 @@ type FoodNameRow = {
   id: number;
   name_en: string;
   energy_kj: string | null;
+  food_use_class: string | null;
 };
 
 type NutrientRow = {
@@ -222,10 +224,13 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
       `SELECT
          f.id,
          f.name_en,
-         v.value AS energy_kj
+         v.value AS energy_kj,
+         c.name AS food_use_class
        FROM fineli_food f
        LEFT JOIN fineli_component_value v
          ON v.food_id = f.id AND v.component = 'ENERC'
+       LEFT JOIN fineli_food_use_class c
+         ON c.code = f.food_use_class
        WHERE f.id = $1`,
       [id],
     );
@@ -253,6 +258,7 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
         id: row.id,
         name,
         kcal,
+        foodUseClass: row.food_use_class,
         nutrients: DETAIL_NUTRIENTS.flatMap((item) => {
           const value = grams(byCode.get(item.code) ?? null);
           if (value === null) {

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import styles from "@/app/foods/foods.module.css";
-import { FoodList } from "@/src/components/food-list/food-list";
+import { SavedFoodList } from "@/src/components/food-list/saved-food-list";
 import { requireUser } from "@/src/lib/auth";
 import { listSavedIngredients } from "@/src/lib/ingredients";
 
@@ -28,7 +28,7 @@ async function SavedIngredients() {
       {foods.length > 0 ? (
         <>
           <p className={styles.count}>{countLabel(foods.length)}</p>
-          <FoodList foods={foods} showId />
+          <SavedFoodList foods={foods} />
         </>
       ) : (
         <p>You have no saved ingredients.</p>
