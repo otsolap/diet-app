@@ -6,6 +6,7 @@ Follow the rules in `.grok/rules/`:
 
 - `maintainer.md` — planning and git
 - `css.md` — CSS
+- `dev-session.md` — dev server and Docker
 
 <!-- BEGIN:nextjs-agent-rules -->
 

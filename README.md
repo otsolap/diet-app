@@ -56,18 +56,38 @@ These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, `/fo
 
 - [Node.js](https://nodejs.org/) 20.9 or later
 - npm
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-## Run the app
+Copy `.env.example` to `.env` before the first start. Replace each `change-me` value. Docker Compose reads the Postgres settings from `.env`.
+
+## Dev session
+
+A dev session starts Docker and the Next.js dev server.
+
+Open Docker Desktop first. Postgres does not start while Docker Desktop is closed.
+
+From this folder:
 
 ```bash
 npm install
+docker compose up -d
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+`docker compose up -d` starts Postgres. The container name is `diet-app-postgres`. It listens on `127.0.0.1` and the port in `POSTGRES_PORT`. The default port is `5432`.
+
+`npm run dev` starts the app at [http://localhost:3000](http://localhost:3000).
+
+Stop Postgres with:
+
+```bash
+docker compose stop
+```
 
 | Command | What it does |
 | --- | --- |
+| `docker compose up -d` | Start Postgres |
+| `docker compose stop` | Stop Postgres |
 | `npm run dev` | Start the development server |
 | `npm run lint` | Run ESLint |
 | `npm run build` | Create a production build |
