@@ -76,6 +76,13 @@ function ensureSchema() {
       release text PRIMARY KEY,
       loaded_at timestamptz NOT NULL DEFAULT now()
     );
+
+    CREATE TABLE IF NOT EXISTS saved_ingredient (
+      user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      food_id integer NOT NULL REFERENCES fineli_food (id) ON DELETE CASCADE,
+      saved_at timestamptz NOT NULL DEFAULT now(),
+      PRIMARY KEY (user_id, food_id)
+    );
   `).then(
     () => undefined,
     (error: unknown) => {

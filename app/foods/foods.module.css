@@ -47,23 +47,6 @@
 	color: var(--color-tertiary-light);
 }
 
-.list {
-	display: flex;
-	flex-direction: column;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.item {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-quarter);
-	padding: var(--spacing-single) 0;
-	border-bottom: .0625rem solid var(--color-primary);
-	color: inherit;
-}
-
 .pages {
 	display: flex;
 	flex-wrap: wrap;
@@ -79,8 +62,6 @@
 	color: var(--color-primary-light);
 }
 
-.item:hover .name,
-.item:focus-visible .name,
 .crumbLink:hover,
 .crumbLink:focus-visible,
 .pageLink:hover,
@@ -190,6 +171,36 @@
 	color: var(--color-secondary-light);
 }
 
+.saveBlock {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	align-self: flex-start;
+	gap: var(--spacing-half);
+	width: fit-content;
+	max-width: 100%;
+}
+
+.saveForm {
+	display: flex;
+	width: fit-content;
+	max-width: 100%;
+}
+
+.save {
+	width: fit-content;
+}
+
+.save:disabled {
+	cursor: not-allowed;
+	opacity: .55;
+}
+
+.hint {
+	margin: 0;
+	color: var(--color-tertiary-light);
+}
+
 .nutrients {
 	width: 100%;
 	min-width: 0;
@@ -232,14 +243,6 @@
 
 .amount,
 .share {
-	color: var(--color-secondary-light);
-}
-
-.name {
-	font-weight: 700;
-}
-
-.energy {
 	color: var(--color-secondary-light);
 }
 

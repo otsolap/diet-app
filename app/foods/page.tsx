@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { primaryButtonClass } from "@/src/components/button/button";
-import { FOOD_PAGE_SIZE, searchFoods, type FoodListItem } from "@/src/lib/food-search";
+import { FoodList } from "@/src/components/food-list/food-list";
+import { FOOD_PAGE_SIZE, searchFoods } from "@/src/lib/food-search";
 import styles from "./foods.module.css";
 
 export const metadata = {
@@ -11,10 +12,6 @@ export const metadata = {
 
 function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
-}
-
-function energyLabel(kcal: number) {
-  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
 }
 
 function pageNumber(value: string | undefined) {
@@ -85,23 +82,6 @@ function FoodPages({
         <span className={styles.pageMuted}>Next</span>
       )}
     </nav>
-  );
-}
-
-function FoodList({ foods }: { foods: FoodListItem[] }) {
-  return (
-    <ul className={styles.list}>
-        {foods.map((food) => (
-          <li key={food.id}>
-            <Link className={styles.item} href={`/foods/${food.id}`}>
-              <span className={styles.name}>{food.name}</span>
-              <span className={styles.energy}>
-                {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
   );
 }
 

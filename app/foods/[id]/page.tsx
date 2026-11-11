@@ -1,7 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
+import { primaryButtonClass } from "@/src/components/button/button";
+import { getCurrentUser } from "@/src/lib/auth";
 import { foodId, getFood, type FoodDetail, type FoodNutrient } from "@/src/lib/food-search";
+import { isIngredientSaved } from "@/src/lib/ingredients";
 import styles from "../foods.module.css";
 
 export const metadata = {
@@ -147,7 +150,57 @@ function FoodMissing() {
   );
 }
 
-function FoodView({ food }: { food: FoodDetail }) {
+function SaveIngredient({
+  foodId,
+  signedIn,
+  saved,
+}: {
+  foodId: number;
+  signedIn: boolean;
+  saved: boolean;
+}) {
+  let control;
+
+  if (!signedIn) {
+    control = (
+      <>
+        <button className={`${primaryButtonClass} ${styles.save}`} type="button" disabled>
+          Save ingredient
+        </button>
+        <p className={styles.hint}>
+          <Link href="/login">Sign in</Link> to save this ingredient.
+        </p>
+      </>
+    );
+  } else if (saved) {
+    control = (
+      <button className={`${primaryButtonClass} ${styles.save}`} type="button" disabled>
+        Saved
+      </button>
+    );
+  } else {
+    control = (
+      <form className={styles.saveForm} method="post" action="/api/ingredients">
+        <input type="hidden" name="foodId" value={foodId} />
+        <button className={`${primaryButtonClass} ${styles.save}`} type="submit">
+          Save ingredient
+        </button>
+      </form>
+    );
+  }
+
+  return <div className={styles.saveBlock}>{control}</div>;
+}
+
+function FoodView({
+  food,
+  signedIn,
+  saved,
+}: {
+  food: FoodDetail;
+  signedIn: boolean;
+  saved: boolean;
+}) {
   return (
     <main className={styles.page}>
       <FoodCrumb current={food.name} />
@@ -156,6 +209,7 @@ function FoodView({ food }: { food: FoodDetail }) {
       <p className={styles.kcal}>
         {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}
       </p>
+      <SaveIngredient foodId={food.id} signedIn={signedIn} saved={saved} />
       {food.nutrients.length > 0 ? (
         <div className={styles.detail}>
           <table className={styles.nutrients}>
@@ -214,7 +268,21 @@ async function FoodDetail({ params }: { params: Promise<{ id: string }> }) {
     );
   }
 
-  return <FoodView food={result.food} />;
+  let signedIn = false;
+  let saved = false;
+
+  try {
+    const user = await getCurrentUser();
+    signedIn = Boolean(user);
+    if (user) {
+      saved = await isIngredientSaved(user.id, result.food.id);
+    }
+  } catch {
+    signedIn = false;
+    saved = false;
+  }
+
+  return <FoodView food={result.food} signedIn={signedIn} saved={saved} />;
 }
 
 export default function FoodPage({ params }: { params: Promise<{ id: string }> }) {

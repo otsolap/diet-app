@@ -28,6 +28,9 @@ async function HeaderAccount({ className }: { className: string }) {
 
   return (
     <>
+      <Link className={styles.saved} href="/saved">
+        Saved
+      </Link>
       <span className={styles.email} title={user.email}>
         {user.email}
       </span>

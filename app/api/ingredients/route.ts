@@ -1,0 +1,24 @@
+import { getCurrentUser } from "@/src/lib/auth";
+import { foodId } from "@/src/lib/food-search";
+import { isSameOrigin, readForm, redirectTo } from "@/src/lib/http";
+import { saveIngredient } from "@/src/lib/ingredients";
+
+export async function POST(request: Request) {
+  if (!isSameOrigin(request)) {
+    return redirectTo(request, "/login?error=origin");
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return redirectTo(request, "/login?error=signedout");
+  }
+
+  const field = await readForm(request);
+  const id = foodId(field("foodId"));
+  if (id === null) {
+    return redirectTo(request, "/foods");
+  }
+
+  await saveIngredient(user.id, id);
+  return redirectTo(request, `/foods/${id}`);
+}

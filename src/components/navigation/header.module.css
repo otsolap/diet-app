@@ -46,6 +46,17 @@
 	white-space: nowrap;
 }
 
+.saved {
+	color: var(--color-secondary-light);
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.saved:hover,
+.saved:focus-visible {
+	color: var(--color-secondary);
+}
+
 .nav,
 .slogan {
 	display: none;
