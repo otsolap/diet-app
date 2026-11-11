@@ -6,6 +6,8 @@ export type SavedIngredient = {
   id: number;
   name: string;
   kcal: number | null;
+  foodUseClass: string | null;
+  foodUseParent: string | null;
 };
 
 function kcalFromKj(value: string | null) {
@@ -22,15 +24,25 @@ function kcalFromKj(value: string | null) {
 }
 
 export async function listSavedIngredients(userId: string) {
-  const result = await query<{ id: number; name: string | null; energy_kj: string | null }>(
+  const result = await query<{
+    id: number;
+    name: string | null;
+    energy_kj: string | null;
+    food_use_class: string | null;
+    food_use_parent: string | null;
+  }>(
     `SELECT
        f.id,
        NULLIF(btrim(f.name_en), '') AS name,
-       v.value::text AS energy_kj
+       v.value::text AS energy_kj,
+       c.name AS food_use_class,
+       c.parent_name AS food_use_parent
      FROM saved_ingredient s
      JOIN fineli_food f ON f.id = s.food_id
      LEFT JOIN fineli_component_value v
        ON v.food_id = f.id AND v.component = 'ENERC'
+     LEFT JOIN fineli_food_use_class c
+       ON c.code = f.food_use_class
      WHERE s.user_id = $1
      ORDER BY s.saved_at DESC, f.id ASC`,
     [userId],
@@ -41,7 +53,13 @@ export async function listSavedIngredients(userId: string) {
       return [];
     }
 
-    return [{ id: row.id, name: row.name, kcal: kcalFromKj(row.energy_kj) }];
+    return [{
+      id: row.id,
+      name: row.name,
+      kcal: kcalFromKj(row.energy_kj),
+      foodUseClass: row.food_use_class,
+      foodUseParent: row.food_use_parent,
+    }];
   });
 }
 

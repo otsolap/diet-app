@@ -14,6 +14,14 @@ type NameRow = {
   en: string;
   fi: string;
   sv: string;
+  foodUseClass: string;
+};
+
+type FoodUseClassRow = {
+  code: string;
+  name: string;
+  parentCode: string;
+  parentName: string;
 };
 
 function readTable(dir: string, file: string) {
@@ -67,7 +75,7 @@ function addNames(
       throw new Error("A Fineli food name has the wrong language.");
     }
 
-    const item = names.get(id) ?? { id, en: "", fi: "", sv: "" };
+    const item = names.get(id) ?? { id, en: "", fi: "", sv: "", foodUseClass: "" };
     item[key] = row[1]?.trim() ?? "";
     names.set(id, item);
   }
@@ -99,6 +107,59 @@ async function main() {
     addNames(names, finnish.rows, "fi", "FI");
     addNames(names, swedish.rows, "sv", "SV");
 
+    const classes = readTable(dir, "fuclass_EN.csv");
+    const foodRows = readTable(dir, "food.csv");
+    expectHeader(classes.header, ["THSCODE", "DESCRIPT", "LANG"], "fuclass_EN.csv");
+    expectHeader(
+      foodRows.header,
+      ["FOODID", "FOODNAME", "FOODTYPE", "PROCESS", "EDPORT", "IGCLASS", "IGCLASSP", "FUCLASS", "FUCLASSP"],
+      "food.csv",
+    );
+
+    const classNames = new Map<string, string>();
+    for (const row of classes.rows) {
+      const code = row[0]?.trim() ?? "";
+      const name = row[1]?.trim() ?? "";
+      if (!code || !name || row[2] !== "EN") {
+        throw new Error("A Fineli food use class is not valid.");
+      }
+      classNames.set(code, name);
+    }
+
+    const foodUseById = new Map<number, { code: string; parentCode: string }>();
+    for (const row of foodRows.rows) {
+      const id = foodId(row[0]);
+      const code = row[7]?.trim() ?? "";
+      const parentCode = row[8]?.trim() ?? "";
+      if (!names.has(id) || !code || !parentCode) {
+        throw new Error("A Fineli food has no food use class.");
+      }
+      foodUseById.set(id, { code, parentCode });
+    }
+
+    for (const food of names.values()) {
+      const use = foodUseById.get(food.id);
+      if (!use) {
+        throw new Error("A Fineli food has no food use class.");
+      }
+      food.foodUseClass = use.code;
+    }
+
+    const foodUseClasses: FoodUseClassRow[] = [];
+    const seenClasses = new Set<string>();
+    for (const use of foodUseById.values()) {
+      if (seenClasses.has(use.code)) {
+        continue;
+      }
+      seenClasses.add(use.code);
+      foodUseClasses.push({
+        code: use.code,
+        name: classNames.get(use.code) ?? use.code,
+        parentCode: use.parentCode,
+        parentName: classNames.get(use.parentCode) ?? use.parentCode,
+      });
+    }
+
     const foods = [...names.values()];
     const componentRows = values.rows.map((row) => {
       const id = foodId(row[0]);
@@ -115,16 +176,44 @@ async function main() {
     });
 
     await withTransaction(async (sql) => {
-      await sql("TRUNCATE fineli_component_value, fineli_food, fineli_release");
+      await sql("TRUNCATE fineli_component_value, fineli_release");
       await sql(
-        `INSERT INTO fineli_food (id, name_en, name_fi, name_sv)
-         SELECT * FROM UNNEST($1::int[], $2::text[], $3::text[], $4::text[])`,
+        `INSERT INTO fineli_food_use_class (code, name, parent_code, parent_name)
+         SELECT * FROM UNNEST($1::text[], $2::text[], $3::text[], $4::text[])
+         ON CONFLICT (code) DO UPDATE
+         SET name = EXCLUDED.name,
+             parent_code = EXCLUDED.parent_code,
+             parent_name = EXCLUDED.parent_name`,
+        [
+          foodUseClasses.map((row) => row.code),
+          foodUseClasses.map((row) => row.name),
+          foodUseClasses.map((row) => row.parentCode),
+          foodUseClasses.map((row) => row.parentName),
+        ],
+      );
+      await sql(
+        `INSERT INTO fineli_food (id, name_en, name_fi, name_sv, food_use_class)
+         SELECT * FROM UNNEST($1::int[], $2::text[], $3::text[], $4::text[], $5::text[])
+         ON CONFLICT (id) DO UPDATE
+         SET name_en = EXCLUDED.name_en,
+             name_fi = EXCLUDED.name_fi,
+             name_sv = EXCLUDED.name_sv,
+             food_use_class = EXCLUDED.food_use_class`,
         [
           foods.map((food) => food.id),
           foods.map((food) => food.en),
           foods.map((food) => food.fi),
           foods.map((food) => food.sv),
+          foods.map((food) => food.foodUseClass),
         ],
+      );
+      await sql(
+        `DELETE FROM fineli_food
+         WHERE NOT (id = ANY($1::int[]))
+           AND NOT EXISTS (
+             SELECT 1 FROM saved_ingredient WHERE saved_ingredient.food_id = fineli_food.id
+           )`,
+        [foods.map((food) => food.id)],
       );
 
       for (let index = 0; index < componentRows.length; index += VALUE_BATCH) {

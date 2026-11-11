@@ -58,11 +58,19 @@ function ensureSchema() {
     )
     AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner = true);
 
+    CREATE TABLE IF NOT EXISTS fineli_food_use_class (
+      code text PRIMARY KEY,
+      name text NOT NULL,
+      parent_code text NOT NULL,
+      parent_name text NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS fineli_food (
       id integer PRIMARY KEY,
       name_en text NOT NULL,
       name_fi text NOT NULL,
-      name_sv text NOT NULL
+      name_sv text NOT NULL,
+      food_use_class text
     );
 
     CREATE TABLE IF NOT EXISTS fineli_component_value (
@@ -76,6 +84,9 @@ function ensureSchema() {
       release text PRIMARY KEY,
       loaded_at timestamptz NOT NULL DEFAULT now()
     );
+
+    ALTER TABLE fineli_food
+      ADD COLUMN IF NOT EXISTS food_use_class text;
 
     CREATE TABLE IF NOT EXISTS saved_ingredient (
       user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,

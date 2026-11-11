@@ -16,6 +16,8 @@ export type FoodListItem = {
   id: number;
   name: string;
   kcal: number | null;
+  foodUseClass: string | null;
+  foodUseParent: string | null;
 };
 
 export type FoodSearchResult =
@@ -55,6 +57,8 @@ type FoodRow = {
   id: number;
   name: string | null;
   energy_kj: string | null;
+  food_use_class: string | null;
+  food_use_parent: string | null;
 };
 
 type FoodNameRow = {
@@ -154,10 +158,14 @@ export async function searchFoods(term: string, page = 1): Promise<FoodSearchRes
       `SELECT
          f.id,
          ${FOOD_NAME_SQL} AS name,
-         v.value AS energy_kj
+         v.value AS energy_kj,
+         c.name AS food_use_class,
+         c.parent_name AS food_use_parent
        FROM fineli_food f
        LEFT JOIN fineli_component_value v
          ON v.food_id = f.id AND v.component = 'ENERC'
+       LEFT JOIN fineli_food_use_class c
+         ON c.code = f.food_use_class
        WHERE ${FOOD_MATCH_SQL}
        ORDER BY
          CASE
@@ -178,7 +186,13 @@ export async function searchFoods(term: string, page = 1): Promise<FoodSearchRes
           return [];
         }
 
-        return [{ id: row.id, name: row.name, kcal: kcalFromKj(row.energy_kj) }];
+        return [{
+          id: row.id,
+          name: row.name,
+          kcal: kcalFromKj(row.energy_kj),
+          foodUseClass: row.food_use_class,
+          foodUseParent: row.food_use_parent,
+        }];
       }),
       total,
       page: current,
