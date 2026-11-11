@@ -13,7 +13,10 @@ The live app is at [diet-app-blond.vercel.app](https://diet-app-blond.vercel.app
 - [x] Protect private pages
 - [x] Fineli food data in Postgres
 - [x] Food search and detail pages
-- [ ] Save foods / meals
+- [ ] Save ingredients
+- [ ] Create meals from one or more ingredients
+- [ ] Food diary for breakfast, lunch, dinner, and supper, with total calories and macros
+- [ ] Week plan
 - [ ] Add TanStack Query
 - [ ] Polish and public launch
 
