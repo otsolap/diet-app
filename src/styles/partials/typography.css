@@ -61,6 +61,7 @@ textarea {
 
 a {
 	color: inherit;
-	text-decoration-line: none;
+	font-family: var(--font-heading);
 	font-weight: 700;
+	text-decoration-line: none;
 }

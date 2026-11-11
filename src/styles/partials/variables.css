@@ -20,8 +20,8 @@
 	--color-black: #0c382f;
 	--color-white: #f6f1ea;
 	--color-neutral-30: #738074;
-	--font-heading: var(--font-geist-sans), sans-serif;
-	--font-body: var(--font-geist-sans), sans-serif;
+	--font-heading: "Hind Guntur", sans-serif;
+	--font-body: "Poppins", sans-serif;
 	--line-height-heading: 1.2;
 	--line-height-subheading: 1.4;
 	--line-height-body: 1.6;
