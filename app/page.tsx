@@ -14,6 +14,7 @@ async function HomeDestination() {
   }
 
   redirect(user ? "/saved" : "/login");
+  return null;
 }
 
 export default function Home() {
