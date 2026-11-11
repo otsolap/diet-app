@@ -27,11 +27,16 @@ function signInRedirect(request: NextRequest) {
 }
 
 export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname === "/") {
+    const target = hasSession(request) ? "/saved" : "/login";
+    return NextResponse.redirect(new URL(target, request.url), 307);
+  }
+
   if (hasSession(request)) {
     return NextResponse.next();
   }
-
-  const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api/")) {
     if (PUBLIC_API.has(pathname)) {

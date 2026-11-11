@@ -31,7 +31,7 @@ async function LoginForm({
   }
 
   if (user) {
-    redirect("/");
+    redirect("/saved");
   }
 
   const params = await searchParams;
