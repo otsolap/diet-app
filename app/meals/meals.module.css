@@ -36,40 +36,19 @@
 
 .line {
 	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-half);
-	padding-bottom: var(--spacing-single);
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-single);
+	padding: .85rem 0;
 	border-bottom: .0625rem solid var(--color-primary);
-}
-
-.head {
-	display: flex;
-	align-items: center;
-	gap: var(--spacing-half);
-	min-width: 0;
-}
-
-.icon {
-	display: flex;
-	flex-shrink: 0;
-	align-items: center;
-	justify-content: center;
-	width: 1.5rem;
-	height: 1.5rem;
-	color: var(--color-secondary-light);
-}
-
-.icon svg {
-	display: block;
-	width: 1.5rem;
-	height: 1.5rem;
 }
 
 .identity {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--spacing-half);
+	gap: .2rem;
 	min-width: 0;
 }
 
@@ -86,7 +65,35 @@
 
 .unit {
 	margin: 0;
-	color: var(--color-tertiary-light);
+	color: var(--color-primary-light);
+	font-size: .875rem;
+}
+
+.lineRemove {
+	width: fit-content;
+	padding: 0;
+	border: 0;
+	background-color: transparent;
+	color: var(--color-primary-light);
+	font-size: .875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.lineRemove:hover,
+.lineRemove:focus-visible {
+	color: var(--color-secondary);
+}
+
+.renameForm button {
+	align-self: flex-start;
+	width: fit-content;
+}
+
+.mealTitle {
+	margin-bottom: calc(var(--spacing-single) * -1);
+	padding-bottom: var(--spacing-single);
+	border-bottom: .0625rem solid var(--color-primary);
 }
 
 .energy {
@@ -96,40 +103,34 @@
 	white-space: nowrap;
 }
 
-.controls {
+.stepper {
 	display: flex;
-	flex-wrap: wrap;
+	flex-shrink: 0;
 	align-items: center;
-	gap: var(--spacing-half);
+	gap: .35rem;
 }
 
 .step,
-.set,
-.removeForm {
+.set {
 	display: flex;
-	align-items: center;
-	gap: var(--spacing-half);
 	margin: 0;
 }
 
 .stepButton,
-.setButton {
-	height: 2.75rem;
-	border: .0625rem solid var(--color-primary-light);
+.quantity {
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 0;
 	border-radius: .5rem;
 	background-color: var(--color-primary-semidark);
 	color: var(--color-white);
 	font-weight: 700;
-	cursor: pointer;
+	text-align: center;
 }
 
 .stepButton {
-	width: 2.75rem;
-	padding: 0;
-}
-
-.setButton {
-	padding: 0 var(--spacing-single);
+	cursor: pointer;
 }
 
 .stepButton:disabled {
@@ -137,8 +138,18 @@
 	opacity: .55;
 }
 
-.quantity,
+.quantity {
+	appearance: textfield;
+}
+
+.quantity::-webkit-outer-spin-button,
+.quantity::-webkit-inner-spin-button {
+	margin: 0;
+	appearance: none;
+}
+
 .select {
+	width: 100%;
 	height: 2.75rem;
 	padding: 0 var(--spacing-three-quarters);
 	border: .0625rem solid var(--color-primary-light);
@@ -148,24 +159,39 @@
 	font-family: inherit;
 }
 
-.quantity {
-	width: 4.5rem;
-}
-
-.select {
-	width: 100%;
-}
-
-.totals {
+.addForm {
 	display: flex;
-	flex-wrap: wrap;
-	gap: var(--spacing-half) var(--spacing-single);
+	flex-direction: column;
+	gap: var(--spacing-single);
+}
+
+.add {
+	width: 100%;
+	height: 2.75rem;
+}
+
+.totalCard {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-single);
+	padding: var(--spacing-single) var(--spacing-single-quarter);
+	border-radius: 1rem;
+	background-color: var(--color-primary-semidark);
+}
+
+.totalLabel,
+.totalEnergy {
 	margin: 0;
 }
 
-.totalItem {
-	margin: 0;
-	color: var(--color-tertiary-light);
+.totalLabel {
+	color: var(--color-primary-light);
+}
+
+.totalEnergy {
+	font-size: 2rem;
+	font-weight: 700;
 }
 
 /* Tablet styles */
@@ -174,20 +200,5 @@
 		flex-direction: row;
 		align-items: baseline;
 		justify-content: space-between;
-	}
-
-	.line {
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.head {
-		flex: 1 1 16rem;
-	}
-
-	.controls {
-		justify-content: flex-end;
 	}
 }

@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import foodStyles from "@/app/foods/foods.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
-import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
+import { primaryButtonClass, secondaryButtonClass } from "@/src/components/button/button";
 import { requireUser } from "@/src/lib/auth";
 import { getMeal, listMealChoices, mealId, type MealChoice, type MealLine } from "@/src/lib/meals";
 import styles from "../meals.module.css";
@@ -28,15 +27,6 @@ function lineEnergy(kcal: number | null) {
   return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
 }
 
-function gramLabel(value: number | null) {
-  if (value === null) {
-    return "—";
-  }
-
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
-  return `${text} g`;
-}
-
 function choiceGroups(choices: MealChoice[]) {
   const saved = choices.filter((choice) => choice.group === "Ingredients");
   const portions = choices.filter((choice) => choice.group === "Portions");
@@ -45,6 +35,17 @@ function choiceGroups(choices: MealChoice[]) {
     { label: "Ingredients", items: saved },
     { label: "Portions", items: portions },
   ].filter((group) => group.items.length > 0);
+}
+
+function BackLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link className={foodStyles.back} href={href}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.5 6.5L8.5 12l6 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      {label}
+    </Link>
+  );
 }
 
 function MealMissing() {
@@ -58,7 +59,7 @@ function MealMissing() {
 
 function QuantityForms({ mealIdValue, line }: { mealIdValue: string; line: MealLine }) {
   return (
-    <div className={styles.controls}>
+    <div className={styles.stepper}>
       <form className={styles.step} method="post" action="/api/meals">
         <input type="hidden" name="intent" value="quantity" />
         <input type="hidden" name="mealId" value={mealIdValue} />
@@ -89,9 +90,6 @@ function QuantityForms({ mealIdValue, line }: { mealIdValue: string; line: MealL
           aria-label={`Count for ${line.name}`}
           required
         />
-        <button className={styles.setButton} type="submit">
-          Set
-        </button>
       </form>
       <form className={styles.step} method="post" action="/api/meals">
         <input type="hidden" name="intent" value="quantity" />
@@ -107,14 +105,6 @@ function QuantityForms({ mealIdValue, line }: { mealIdValue: string; line: MealL
           +
         </button>
       </form>
-      <form className={styles.removeForm} method="post" action="/api/meals">
-        <input type="hidden" name="intent" value="remove-item" />
-        <input type="hidden" name="mealId" value={mealIdValue} />
-        <input type="hidden" name="itemId" value={line.id} />
-        <button className={foodStyles.remove} type="submit">
-          Remove
-        </button>
-      </form>
     </div>
   );
 }
@@ -126,11 +116,11 @@ function AddIngredient({ mealIdValue, choices }: { mealIdValue: string; choices:
   }
 
   return (
-    <form className={foodStyles.form} method="post" action="/api/meals">
+    <form className={styles.addForm} method="post" action="/api/meals">
       <input type="hidden" name="intent" value="add" />
       <input type="hidden" name="mealId" value={mealIdValue} />
       <label className={foodStyles.field}>
-        Ingredient
+        <span className={foodStyles.srOnly}>Ingredient</span>
         <select className={styles.select} name="item" required defaultValue="">
           <option value="">Choose an ingredient</option>
           {groups.map((group) => (
@@ -144,8 +134,8 @@ function AddIngredient({ mealIdValue, choices }: { mealIdValue: string; choices:
           ))}
         </select>
       </label>
-      <button className={`${primaryButtonClass} ${foodStyles.submit}`} type="submit">
-        Add
+      <button className={`${secondaryButtonClass} ${styles.add}`} type="submit">
+        Add ingredient
       </button>
     </form>
   );
@@ -170,20 +160,41 @@ async function MealView({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <main className={foodStyles.page}>
-      <nav className={foodStyles.breadcrumb} aria-label="Breadcrumb">
-        <ol className={foodStyles.crumbList}>
-          <li className={foodStyles.crumbItem}>
-            <Link className={foodStyles.crumbLink} href="/meals">
-              Meals
-            </Link>
-          </li>
-          <li className={foodStyles.crumbItem} aria-current="page">
-            <span className={foodStyles.crumbCurrent}>{meal.name}</span>
-          </li>
-        </ol>
-      </nav>
-      <h1 className={foodStyles.title}>{meal.name}</h1>
-      <form className={foodStyles.form} method="post" action="/api/meals">
+      <BackLink href="/meals" label="Meals" />
+      <h1 className={`${foodStyles.title} ${styles.mealTitle}`}>{meal.name}</h1>
+      {meal.lines.length > 0 ? (
+        <ul className={styles.lines}>
+          {meal.lines.map((line) => (
+            <li className={styles.line} key={line.id}>
+              <div className={styles.identity}>
+                <Link className={styles.name} href={line.href}>
+                  {line.name}
+                </Link>
+                <p className={styles.unit}>{lineEnergy(line.kcal)}</p>
+                <form method="post" action="/api/meals">
+                  <input type="hidden" name="intent" value="remove-item" />
+                  <input type="hidden" name="mealId" value={meal.id} />
+                  <input type="hidden" name="itemId" value={line.id} />
+                  <button className={styles.lineRemove} type="submit">
+                    Remove
+                  </button>
+                </form>
+              </div>
+              <QuantityForms mealIdValue={meal.id} line={line} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>This meal has no ingredients.</p>
+      )}
+      {meal.lines.length > 0 ? (
+        <div className={styles.totalCard}>
+          <p className={styles.totalLabel}>Total</p>
+          <p className={styles.totalEnergy}>{energyLabel(meal.kcal)}</p>
+        </div>
+      ) : null}
+      <AddIngredient mealIdValue={meal.id} choices={choices} />
+      <form className={`${foodStyles.form} ${styles.renameForm}`} method="post" action="/api/meals">
         <input type="hidden" name="intent" value="rename" />
         <input type="hidden" name="mealId" value={meal.id} />
         <label className={foodStyles.field}>
@@ -194,39 +205,6 @@ async function MealView({ params }: { params: Promise<{ id: string }> }) {
           Rename
         </button>
       </form>
-      <p className={foodStyles.hint}>Set the count to multiply one ingredient.</p>
-      <AddIngredient mealIdValue={meal.id} choices={choices} />
-      {meal.lines.length > 0 ? (
-        <>
-          <p className={foodStyles.kcal}>{energyLabel(meal.kcal)}</p>
-          <div className={styles.totals}>
-            <p className={styles.totalItem}>Fat {gramLabel(meal.fat)}</p>
-            <p className={styles.totalItem}>Protein {gramLabel(meal.protein)}</p>
-            <p className={styles.totalItem}>Carbs {gramLabel(meal.carbs)}</p>
-          </div>
-          <ul className={styles.lines}>
-            {meal.lines.map((line) => (
-              <li className={styles.line} key={line.id}>
-                <div className={styles.head}>
-                  <FoodCategoryIcon category={line.foodUseClass} className={styles.icon} />
-                  <div className={styles.identity}>
-                    <Link className={styles.name} href={line.href}>
-                      {line.name}
-                    </Link>
-                    <p className={styles.unit}>
-                      {line.quantity} × {line.baseLabel}
-                    </p>
-                  </div>
-                  <span className={styles.energy}>{lineEnergy(line.kcal)}</span>
-                </div>
-                <QuantityForms mealIdValue={meal.id} line={line} />
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <p>This meal has no ingredients.</p>
-      )}
       <form method="post" action="/api/meals">
         <input type="hidden" name="intent" value="delete" />
         <input type="hidden" name="mealId" value={meal.id} />
