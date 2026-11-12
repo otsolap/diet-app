@@ -1,9 +1,10 @@
 .header {
+	display: block;
 	position: sticky;
 	top: 0;
 	z-index: 50;
 	flex-shrink: 0;
-	margin-bottom: var(--spacing-triple);
+	margin-bottom: 0;
 	background-color: var(--color-primary-dark);
 }
 
@@ -46,15 +47,9 @@
 	white-space: nowrap;
 }
 
-.saved {
-	color: var(--color-secondary-light);
-	font-weight: 700;
-	white-space: nowrap;
-}
-
-.saved:hover,
-.saved:focus-visible {
-	color: var(--color-secondary);
+.accountBar .email,
+.accountBar form {
+	display: none;
 }
 
 .nav,
@@ -71,6 +66,10 @@
 
 /* Tablet styles */
 @media (width >= 768px) {
+	.header {
+		margin-bottom: var(--spacing-triple);
+	}
+
 	.bar {
 		flex-direction: column;
 		align-items: stretch;

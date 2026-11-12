@@ -2,22 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { SiteLink } from "@/src/lib/site";
-import { site } from "@/src/lib/site";
-import { isCurrentPath } from "@/src/lib/path";
+import { mainNav, site } from "@/src/lib/site";
+import { isCurrentPath, isMainNavActive } from "@/src/lib/path";
 import styles from "./header.module.css";
 
-function Menu({
-  links,
-  pathname,
-}: {
-  links: SiteLink[];
-  pathname?: string;
-}) {
+function Menu({ pathname }: { pathname?: string }) {
   return (
     <div className={styles.menu}>
-      {links.map((link) => {
-        const current = pathname ? isCurrentPath(pathname, link.href) : false;
+      {mainNav.map((link) => {
+        const current = pathname ? isMainNavActive(pathname, link.href) : false;
 
         return (
           <Link
@@ -34,14 +27,14 @@ function Menu({
   );
 }
 
-export function HeaderMenuFallback({ links }: { links: SiteLink[] }) {
-  return <Menu links={links} />;
+export function HeaderMenuFallback() {
+  return <Menu />;
 }
 
-export function HeaderMenu({ links }: { links: SiteLink[] }) {
+export function HeaderMenu() {
   const pathname = usePathname();
 
-  return <Menu links={links} pathname={pathname} />;
+  return <Menu pathname={pathname} />;
 }
 
 function Cta({ className, current }: { className: string; current?: boolean }) {

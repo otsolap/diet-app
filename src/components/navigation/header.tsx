@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { primaryButtonClass } from "@/src/components/button/button";
 import { getCurrentUser } from "@/src/lib/auth";
@@ -28,12 +28,6 @@ async function HeaderAccount({ className }: { className: string }) {
 
   return (
     <>
-      <Link className={styles.saved} href="/saved-ingredients">
-        Ingredients
-      </Link>
-      <Link className={styles.saved} href="/meals">
-        Meals
-      </Link>
       <span className={styles.email} title={user.email}>
         {user.email}
       </span>
@@ -49,13 +43,15 @@ async function HeaderAccount({ className }: { className: string }) {
 function AccountSlot({
   className,
   slotClassName,
+  fallback,
 }: {
   className: string;
   slotClassName: string;
+  fallback: ReactNode;
 }) {
   return (
     <div className={slotClassName}>
-      <Suspense fallback={<HeaderCtaFallback className={className} />}>
+      <Suspense fallback={fallback}>
         <HeaderAccount className={className} />
       </Suspense>
     </div>
@@ -63,8 +59,7 @@ function AccountSlot({
 }
 
 export function Header() {
-  const { title, slogan, links, callToAction } = site.header;
-  const menuLinks = links.filter((link) => link.href !== callToAction.href);
+  const { title, slogan } = site.header;
 
   return (
     <div className={styles.header}>
@@ -75,18 +70,20 @@ export function Header() {
           </Link>
           {slogan ? <p className={styles.slogan}>{slogan}</p> : null}
         </div>
-        <AccountSlot className={buttonClass} slotClassName={`${styles.account} ${styles.accountBar}`} />
+        <AccountSlot className={buttonClass} slotClassName={`${styles.account} ${styles.accountBar}`} fallback={null} />
       </header>
-      {menuLinks.length > 0 || callToAction ? (
-        <nav className={styles.nav} aria-label="Primary">
-          <div className={styles.navInner}>
-            <Suspense fallback={<HeaderMenuFallback links={menuLinks} />}>
-              <HeaderMenu links={menuLinks} />
-            </Suspense>
-            <AccountSlot className={buttonClass} slotClassName={styles.account} />
-          </div>
-        </nav>
-      ) : null}
+      <nav className={styles.nav} aria-label="Primary">
+        <div className={styles.navInner}>
+          <Suspense fallback={<HeaderMenuFallback />}>
+            <HeaderMenu />
+          </Suspense>
+          <AccountSlot
+            className={buttonClass}
+            slotClassName={styles.account}
+            fallback={<HeaderCtaFallback className={buttonClass} />}
+          />
+        </div>
+      </nav>
     </div>
   );
 }

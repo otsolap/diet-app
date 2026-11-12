@@ -4,17 +4,18 @@ export type SiteLink = {
   isExternal?: boolean;
 };
 
+export const mainNav = [
+  { href: "/ingredients", title: "Search", tab: "search" },
+  { href: "/saved-ingredients", title: "Ingredients", tab: "ingredients" },
+  { href: "/meals", title: "Meals", tab: "meals" },
+] as const;
+
 export const site = {
   title: "Diet app",
   description: "Search foods and save meals. Food data comes from Fineli.",
   header: {
     title: "Diet app",
     slogan: "Search foods. Save meals.",
-    links: [
-      { href: "/", title: "Home" },
-      { href: "/ingredients", title: "Search" },
-      { href: "/about", title: "About" },
-    ] satisfies SiteLink[],
     callToAction: { href: "/login", title: "Sign in" } satisfies SiteLink,
   },
   footer: {

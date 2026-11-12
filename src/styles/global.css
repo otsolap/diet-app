@@ -25,4 +25,13 @@ body {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	padding-bottom: 5.5rem;
+	padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+/* Tablet styles */
+@media (width >= 768px) {
+	body {
+		padding-bottom: 0;
+	}
 }

@@ -1,5 +1,5 @@
 .footer {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	flex-shrink: 0;
 	width: 100%;
@@ -95,6 +95,7 @@
 /* Tablet styles */
 @media (width >= 768px) {
 	.footer {
+		display: flex;
 		padding-bottom: var(--spacing-triple);
 	}
 

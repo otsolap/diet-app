@@ -1,220 +1,113 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { site, type SiteLink } from "@/src/lib/site";
-import { isCurrentPath } from "@/src/lib/path";
+import { isMainNavActive } from "@/src/lib/path";
+import { mainNav } from "@/src/lib/site";
 import styles from "./mobile-nav.module.css";
 
-const PRIMARY_PAGES = 3;
+const TABS = mainNav;
 
-function BarIcon({ open }: { open: boolean }) {
-  if (open) {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        width="1.875rem"
-        height="1.875rem"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden="true"
-      >
-        <path d="M6 6l12 12M18 6L6 18" />
-      </svg>
-    );
-  }
-
+function SearchIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      width="1.875rem"
-      height="1.875rem"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path d="M4 7h16M4 12h16M4 17h16" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M15.5 15.5L20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
-function ItemLink({
-  link,
-  pathname,
-  className,
-  labeled = false,
-  onNavigate,
-}: {
-  link: SiteLink;
-  pathname?: string;
-  className: string;
-  labeled?: boolean;
-  onNavigate?: () => void;
-}) {
-  const current = pathname ? isCurrentPath(pathname, link.href) : false;
-
+function IngredientsIcon() {
   return (
-    <Link
-      className={current ? `${className} ${styles.linkActive}` : className}
-      href={link.href}
-      aria-current={current ? "page" : undefined}
-      onClick={onNavigate}
-    >
-      {labeled ? <span className={styles.label}>{link.title}</span> : link.title}
-    </Link>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M8 9.5h8M9 9.5V8.2A1.2 1.2 0 0 1 10.2 7h3.6A1.2 1.2 0 0 1 15 8.2v1.3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8.2 9.5h7.6l-.7 9.2a1.5 1.5 0 0 1-1.5 1.3h-3.2a1.5 1.5 0 0 1-1.5-1.3l-.7-9.2Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
-function MobileNavFrame({
-  pathname,
-  open = false,
-  navRef,
-  onToggle,
-  onClose,
-}: {
-  pathname?: string;
-  open?: boolean;
-  navRef?: RefObject<HTMLElement | null>;
-  onToggle?: () => void;
-  onClose?: () => void;
-}) {
-  const links = site.header.links;
-  const primary = links.slice(0, PRIMARY_PAGES);
-  const extra = links.slice(PRIMARY_PAGES);
+function MealsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M5 15.5h14M7.2 15.5a4.8 4.8 0 0 1 9.6 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M12 6.2v2.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
-  if (primary.length === 0) {
-    return null;
+function TabIcon({ tab }: { tab: (typeof TABS)[number]["tab"] }) {
+  if (tab === "search") {
+    return <SearchIcon />;
   }
 
-  const itemCount = primary.length + (extra.length > 0 ? 1 : 0);
+  if (tab === "ingredients") {
+    return <IngredientsIcon />;
+  }
 
-  return (
-    <>
-      {extra.length > 0 ? (
-        <div
-          className={open ? `${styles.sidebar} ${styles.sidebarOpen}` : styles.sidebar}
-          id="mobile-sidebar"
-          role="dialog"
-          aria-label="Menu"
-          aria-hidden={!open}
-          inert={open ? undefined : true}
-        >
-          <ul className={styles.list}>
-            {extra.map((link) => (
-              <li className={styles.item} key={link.href}>
-                <ItemLink
-                  link={link}
-                  pathname={pathname}
-                  className={styles.sidebarLink}
-                  onNavigate={onClose}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-      <nav
-        ref={navRef}
-        className={styles.nav}
-        aria-label="Mobile"
-        style={{ "--mobile-nav-count": itemCount } as CSSProperties}
-      >
-        <div className={styles.bar}>
-          {primary.map((link) => (
-            <ItemLink
-              key={link.href}
-              link={link}
-              pathname={pathname}
-              className={styles.link}
-              labeled
-              onNavigate={onClose}
-            />
-          ))}
-          {extra.length > 0 ? (
-            <button
-              className={styles.toggle}
-              type="button"
-              aria-expanded={open}
-              aria-controls="mobile-sidebar"
-              onClick={onToggle}
-            >
-              <span className={styles.icon}>
-                <BarIcon open={open} />
-              </span>
-              <span className={styles.label}>{open ? "Close" : "Menu"}</span>
-            </button>
-          ) : null}
-        </div>
-      </nav>
-    </>
-  );
+  return <MealsIcon />;
 }
 
 export function MobileNavFallback() {
-  return <MobileNavFrame />;
+  return (
+    <nav className={styles.nav} aria-label="Mobile">
+      <div className={styles.bar}>
+        {TABS.map((tab) => (
+          <Link className={styles.link} href={tab.href} key={tab.href}>
+            <span className={styles.icon}>
+              <TabIcon tab={tab.tab} />
+            </span>
+            <span>{tab.title}</span>
+            <span className={styles.mark} />
+          </Link>
+        ))}
+      </div>
+    </nav>
+  );
 }
 
 export function MobileNavClient() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
-  const openRef = useRef(false);
-
-  function setMenu(next: boolean) {
-    openRef.current = next;
-    setOpen(next);
-    if (navRef.current) {
-      navRef.current.style.opacity = "1";
-    }
-  }
-
-  useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) {
-      return;
-    }
-
-    const bar = nav;
-    let lastScrollY = window.scrollY;
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && openRef.current) {
-        openRef.current = false;
-        setOpen(false);
-        bar.style.opacity = "1";
-      }
-    }
-
-    function onScroll() {
-      if (openRef.current) {
-        bar.style.opacity = "1";
-        return;
-      }
-
-      const y = window.scrollY;
-      bar.style.opacity = y > lastScrollY ? ".5" : "1";
-      lastScrollY = y;
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
 
   return (
-    <MobileNavFrame
-      pathname={pathname}
-      open={open}
-      navRef={navRef}
-      onToggle={() => setMenu(!openRef.current)}
-      onClose={() => setMenu(false)}
-    />
+    <nav className={styles.nav} aria-label="Mobile">
+      <div className={styles.bar}>
+        {TABS.map((tab) => {
+          const current = isMainNavActive(pathname, tab.href);
+
+          return (
+            <Link
+              className={current ? `${styles.link} ${styles.linkActive}` : styles.link}
+              href={tab.href}
+              aria-current={current ? "page" : undefined}
+              key={tab.href}
+            >
+              <span className={styles.icon}>
+                <TabIcon tab={tab.tab} />
+              </span>
+              <span>{tab.title}</span>
+              <span className={styles.mark} />
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
