@@ -13,7 +13,7 @@ async function HomeDestination() {
     user = null;
   }
 
-  redirect(user ? "/saved" : "/login");
+  redirect(user ? "/saved-ingredients" : "/login");
   return null;
 }
 

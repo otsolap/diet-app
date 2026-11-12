@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       await removePortion(user.id, id);
     }
 
-    return redirectTo(request, "/saved");
+    return redirectTo(request, "/saved-ingredients");
   }
 
   const id = foodId(field("foodId"));

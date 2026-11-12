@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       await removeIngredient(user.id, id);
     }
 
-    return redirectTo(request, "/saved");
+    return redirectTo(request, "/saved-ingredients");
   }
 
   if (id === null) {

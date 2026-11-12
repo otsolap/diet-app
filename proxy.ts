@@ -30,7 +30,12 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/") {
-    const target = hasSession(request) ? "/saved" : "/login";
+    const target = hasSession(request) ? "/saved-ingredients" : "/login";
+    return NextResponse.redirect(new URL(target, request.url), 307);
+  }
+
+  if (pathname === "/saved") {
+    const target = hasSession(request) ? "/saved-ingredients" : "/login?error=signedout";
     return NextResponse.redirect(new URL(target, request.url), 307);
   }
 
