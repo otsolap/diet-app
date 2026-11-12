@@ -45,7 +45,7 @@ async function PortionView({ params }: { params: Promise<{ id: string }> }) {
       </div>
       <p className={styles.foodId}>{portion.gramsLabel}</p>
       <p className={styles.source}>
-        From <Link href={`/foods/${portion.foodId}`}>{portion.foodName}</Link>
+        From <Link href={`/ingredients/${portion.foodId}`}>{portion.foodName}</Link>
       </p>
       <p className={styles.kcal}>
         {portion.kcal === null ? "No energy value" : energyLabel(portion.kcal)}

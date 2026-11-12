@@ -15,7 +15,7 @@ function hasSession(request: NextRequest) {
 }
 
 function isPublicPage(pathname: string) {
-  if (PUBLIC_PAGES.has(pathname) || pathname === "/foods" || /^\/foods\/[^/]+$/.test(pathname)) {
+  if (PUBLIC_PAGES.has(pathname) || pathname === "/ingredients" || /^\/ingredients\/[^/]+$/.test(pathname)) {
     return true;
   }
 
@@ -32,6 +32,12 @@ export function proxy(request: NextRequest) {
   if (pathname === "/") {
     const target = hasSession(request) ? "/saved-ingredients" : "/login";
     return NextResponse.redirect(new URL(target, request.url), 307);
+  }
+
+  if (pathname === "/foods" || /^\/foods\/[^/]+$/.test(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/foods/, "/ingredients");
+    return NextResponse.redirect(url, 307);
   }
 
   if (pathname === "/saved") {

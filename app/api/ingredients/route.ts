@@ -24,9 +24,9 @@ export async function POST(request: Request) {
   }
 
   if (id === null) {
-    return redirectTo(request, "/foods");
+    return redirectTo(request, "/ingredients");
   }
 
   await saveIngredient(user.id, id);
-  return redirectTo(request, `/foods/${id}`);
+  return redirectTo(request, `/ingredients/${id}`);
 }

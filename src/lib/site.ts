@@ -12,7 +12,7 @@ export const site = {
     slogan: "Search foods. Save meals.",
     links: [
       { href: "/", title: "Home" },
-      { href: "/foods", title: "Foods" },
+      { href: "/ingredients", title: "Search" },
       { href: "/about", title: "About" },
     ] satisfies SiteLink[],
     callToAction: { href: "/login", title: "Sign in" } satisfies SiteLink,
@@ -22,7 +22,7 @@ export const site = {
       title: "Pages",
       links: [
         { href: "/", title: "Home" },
-        { href: "/foods", title: "Foods" },
+        { href: "/ingredients", title: "Search" },
         { href: "/about", title: "About" },
         { href: "/login", title: "Sign in" },
       ] satisfies SiteLink[],

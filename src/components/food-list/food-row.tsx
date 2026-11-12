@@ -32,7 +32,7 @@ export function FoodRow({
   return (
     <Link
       className={`${styles.item} ${showId ? styles.itemWithId : ""}`}
-      href={food.href ?? `/foods/${food.id}`}
+      href={food.href ?? `/ingredients/${food.id}`}
     >
       {showId ? <span className={styles.id}>{food.idLabel ?? food.id}</span> : null}
       <FoodCategoryIcon category={food.foodUseClass} saved={saved} className={styles.icon} />

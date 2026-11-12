@@ -48,13 +48,19 @@
 	margin-bottom: 0;
 }
 
-.field input {
+.field input,
+.field select {
 	height: 2.75rem;
 	padding: 0 var(--spacing-three-quarters);
 	border: .0625rem solid var(--color-primary-light);
 	border-radius: .5rem;
 	background-color: var(--color-primary-semidark);
 	color: var(--color-white);
+}
+
+.field select {
+	width: 100%;
+	font-family: inherit;
 }
 
 .field input::placeholder {

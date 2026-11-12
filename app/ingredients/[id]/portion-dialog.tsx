@@ -2,10 +2,20 @@
 
 import { useId, useRef, type MouseEvent } from "react";
 import { primaryButtonClass } from "@/src/components/button/button";
-import styles from "../foods.module.css";
+import styles from "@/app/foods/foods.module.css";
 
-export function PortionDialog({ foodId }: { foodId: number }) {
+export function PortionDialog({
+  foodId,
+  portionName,
+  portionGrams,
+}: {
+  foodId: number;
+  portionName: string;
+  portionGrams: string;
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const gramsRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
 
   function open() {
@@ -14,6 +24,12 @@ export function PortionDialog({ foodId }: { foodId: number }) {
       return;
     }
 
+    if (nameRef.current) {
+      nameRef.current.value = portionName;
+    }
+    if (gramsRef.current) {
+      gramsRef.current.value = portionGrams;
+    }
     dialog.showModal();
   }
 
@@ -50,11 +66,12 @@ export function PortionDialog({ foodId }: { foodId: number }) {
           <input type="hidden" name="foodId" value={foodId} />
           <label className={styles.field}>
             Name
-            <input name="name" type="text" required maxLength={80} placeholder="Teaspoon" />
+            <input ref={nameRef} name="name" type="text" required maxLength={80} placeholder="Teaspoon" />
           </label>
           <label className={styles.field}>
             Grams
             <input
+              ref={gramsRef}
               name="grams"
               type="number"
               required
