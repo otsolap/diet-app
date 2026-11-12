@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { primaryButtonClass } from "@/src/components/button/button";
-import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
 import { PortionSize } from "./portion-size";
 import { getCurrentUser } from "@/src/lib/auth";
 import { foodId, getFood, type FoodDetail, type FoodNutrient } from "@/src/lib/food-search";
@@ -13,46 +12,20 @@ export const metadata = {
   title: "Food",
 };
 
-const CRUMB_NAME_LIMIT = 36;
-
 const CHART_COLORS: Record<string, string> = {
   Fat: "var(--color-secondary)",
   Protein: "var(--color-tertiary-light)",
   Carbs: "var(--color-white)",
 };
 
-function crumbLabel(name: string) {
-  if (name.length <= CRUMB_NAME_LIMIT) {
-    return name;
-  }
-
-  const comma = name.indexOf(",");
-  if (comma <= 0) {
-    return name;
-  }
-
-  const shortName = name.slice(0, comma).trim();
-  return shortName || name;
-}
-
-function FoodCrumb({ current }: { current: string }) {
-  const label = crumbLabel(current);
-
+function BackLink({ href, label }: { href: string; label: string }) {
   return (
-    <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-      <ol className={styles.crumbList}>
-        <li className={styles.crumbItem}>
-          <Link className={styles.crumbLink} href="/ingredients">
-            Search
-          </Link>
-        </li>
-        <li className={styles.crumbItem} aria-current="page">
-          <span className={styles.crumbCurrent} title={label === current ? undefined : current}>
-            {label}
-          </span>
-        </li>
-      </ol>
-    </nav>
+    <Link className={styles.back} href={href}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.5 6.5L8.5 12l6 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      {label}
+    </Link>
   );
 }
 
@@ -121,16 +94,18 @@ function MacroChart({ nutrients }: { nutrients: FoodNutrient[] }) {
     return null;
   }
 
+  const amounts = new Map(nutrients.map((item) => [item.label, item.amount]));
+
   return (
     <figure className={styles.chart}>
-      <figcaption className={styles.chartTitle}>Macro shares</figcaption>
       <div className={styles.pie} style={{ backgroundImage: image }} aria-hidden="true" />
       <ul className={styles.legend}>
         {parts.map((part) => (
           <li key={part.label} className={styles.legendItem}>
             <span className={`${styles.swatch} ${swatchClass(part.label)}`} aria-hidden="true" />
-            <span>{part.label}</span>
-            <span>{part.share}</span>
+            <span className={styles.legendLabel}>{part.label}</span>
+            <span className={styles.legendAmount}>{amounts.get(part.label)}</span>
+            <span className={styles.legendShare}>{part.share}</span>
           </li>
         ))}
       </ul>
@@ -141,7 +116,7 @@ function MacroChart({ nutrients }: { nutrients: FoodNutrient[] }) {
 function FoodMissing() {
   return (
     <main className={styles.page}>
-      <FoodCrumb current="Food not found" />
+      <BackLink href="/ingredients" label="Search" />
       <h1 className={styles.title}>Food not found</h1>
       <p>That food is not available.</p>
     </main>
@@ -161,18 +136,16 @@ function SaveIngredient({
 
   if (!signedIn) {
     control = (
-      <>
-        <button className={`${primaryButtonClass} ${styles.save}`} type="button" disabled>
-          Save ingredient
+      <form className={styles.saveForm} method="post" action="/api/ingredients">
+        <input type="hidden" name="foodId" value={foodId} />
+        <button className={`${primaryButtonClass} ${styles.save}`} type="submit">
+          Save
         </button>
-        <p className={styles.hint}>
-          <Link href="/login">Sign in</Link> to save this ingredient.
-        </p>
-      </>
+      </form>
     );
   } else if (saved) {
     control = (
-      <button className={`${primaryButtonClass} ${styles.save}`} type="button" disabled>
+      <button className={styles.savedButton} type="button" disabled>
         Saved
       </button>
     );
@@ -181,13 +154,13 @@ function SaveIngredient({
       <form className={styles.saveForm} method="post" action="/api/ingredients">
         <input type="hidden" name="foodId" value={foodId} />
         <button className={`${primaryButtonClass} ${styles.save}`} type="submit">
-          Save ingredient
+          Save
         </button>
       </form>
     );
   }
 
-  return <div className={styles.saveBlock}>{control}</div>;
+  return <div className={styles.saveBar}>{control}</div>;
 }
 
 function FoodView({
@@ -201,22 +174,23 @@ function FoodView({
 }) {
   return (
     <main className={styles.page}>
-      <FoodCrumb current={food.name} />
-      <div className={styles.titleRow}>
-        <FoodCategoryIcon category={food.foodUseClass} className={styles.categoryIcon} />
+      <BackLink href="/ingredients" label="Search" />
+      <div className={styles.hero}>
         <h1 className={styles.title}>{food.name}</h1>
+        <p className={styles.heroEnergy}>
+          {food.kcal === null ? "No energy value" : `${new Intl.NumberFormat("en").format(food.kcal)} kcal`}
+        </p>
+        {food.kcal === null ? null : <p className={styles.perNote}>per 100 g</p>}
       </div>
-      <p className={styles.foodId}>Id {food.id}</p>
+      {food.nutrients.length > 0 ? <MacroChart nutrients={food.nutrients} /> : null}
+      <SaveIngredient foodId={food.id} signedIn={signedIn} saved={saved} />
       <PortionSize
         foodId={food.id}
         signedIn={signedIn}
         kcalPer100={food.kcal}
         units={food.units}
         nutrients={food.basis}
-      >
-        {food.nutrients.length > 0 ? <MacroChart nutrients={food.nutrients} /> : null}
-      </PortionSize>
-      <SaveIngredient foodId={food.id} signedIn={signedIn} saved={saved} />
+      />
     </main>
   );
 }
@@ -237,7 +211,7 @@ async function FoodDetail({ params }: { params: Promise<{ id: string }> }) {
   if ("error" in result) {
     return (
       <main className={styles.page}>
-        <FoodCrumb current="Food" />
+        <BackLink href="/ingredients" label="Search" />
         <h1 className={styles.title}>Food</h1>
         <p className={styles.error}>{result.error}</p>
       </main>
@@ -266,7 +240,6 @@ export default function FoodPage({ params }: { params: Promise<{ id: string }> }
     <Suspense
       fallback={
         <main className={styles.page}>
-          <FoodCrumb current="Food" />
           <h1 className={styles.title}>Food</h1>
           <p>Loading.</p>
         </main>

@@ -1,10 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
-import { primaryButtonClass } from "@/src/components/button/button";
 import { FoodList } from "@/src/components/food-list/food-list";
 import { getCurrentUser } from "@/src/lib/auth";
-import { FOOD_PAGE_SIZE, searchFoods } from "@/src/lib/food-search";
+import { searchFoods } from "@/src/lib/food-search";
 import { listSavedFoodIds } from "@/src/lib/ingredients";
 import { portionEntry, searchPortions } from "@/src/lib/portions";
 import styles from "@/app/foods/foods.module.css";
@@ -32,24 +31,6 @@ function pageHref(term: string, page: number) {
   }
 
   return `/ingredients?${params.toString()}`;
-}
-
-function countLabel(total: number, page: number) {
-  if (total === 1) {
-    return "1 food";
-  }
-
-  if (total <= FOOD_PAGE_SIZE) {
-    return `${total} foods`;
-  }
-
-  const start = (page - 1) * FOOD_PAGE_SIZE + 1;
-  const end = Math.min(page * FOOD_PAGE_SIZE, total);
-  if (start === end) {
-    return `${start} of ${total} foods`;
-  }
-
-  return `${start}–${end} of ${total} foods`;
 }
 
 async function viewerFoods(term: string) {
@@ -118,7 +99,6 @@ async function FoodSearch({
   const result = term ? await searchFoods(term, pageNumber(firstValue(params.page))) : null;
   const error = result && "error" in result ? result.error : null;
   const foods = result && "foods" in result ? result.foods : [];
-  const total = result && "total" in result ? result.total : 0;
   const page = result && "page" in result ? result.page : 1;
   const pageCount = result && "pageCount" in result ? result.pageCount : 0;
   const viewer = term && !error ? await viewerFoods(term) : { savedIds: new Set<number>(), portions: [] };
@@ -127,27 +107,20 @@ async function FoodSearch({
   return (
     <main className={styles.page}>
       <h1 className={styles.title}>Search</h1>
-      <form className={styles.form} method="get" action="/ingredients">
-        <label className={styles.field}>
-          Search
-          <input
-            name="q"
-            type="search"
-            defaultValue={term}
-            maxLength={80}
-            placeholder="Potato"
-            required
-          />
+      <form className={styles.searchForm} method="get" action="/ingredients">
+        <label className={styles.searchField}>
+          <span className={styles.srOnly}>Search</span>
+          <svg className={styles.searchIcon} viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
+            <path d="M15.5 15.5L20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <input name="q" type="search" defaultValue={term} maxLength={80} placeholder="Search" required />
         </label>
-        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-          Search
-        </button>
       </form>
       {error ? <p className={styles.error}>{error}</p> : null}
       {rows.length > 0 ? (
         <>
-          {foods.length > 0 ? <p className={styles.count}>{countLabel(total, page)}</p> : null}
-          <FoodList foods={rows} savedIds={viewer.savedIds} />
+          <FoodList foods={rows} savedIds={viewer.savedIds} returnTo={term ? pageHref(term, page) : undefined} />
           <FoodPages term={term} page={page} pageCount={pageCount} />
         </>
       ) : null}

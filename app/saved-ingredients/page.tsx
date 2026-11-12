@@ -10,14 +10,6 @@ export const metadata = {
   title: "Ingredients",
 };
 
-function countLabel(total: number) {
-  if (total === 1) {
-    return "1 ingredient";
-  }
-
-  return `${total} ingredients`;
-}
-
 function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -43,10 +35,7 @@ async function SavedIngredients({
         <p className={styles.error}>That portion is in a meal. Remove it from the meal first.</p>
       ) : null}
       {foods.length > 0 ? (
-        <>
-          <p className={styles.count}>{countLabel(foods.length)}</p>
-          <SavedFoodList foods={foods} />
-        </>
+        <SavedFoodList foods={foods} />
       ) : (
         <p>You have no ingredients.</p>
       )}

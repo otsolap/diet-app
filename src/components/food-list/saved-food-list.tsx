@@ -1,32 +1,40 @@
-import { FoodGroups } from "./food-groups";
-import { FoodRow, type FoodListEntry } from "./food-row";
+import { energyText, FoodRow, type FoodListEntry } from "./food-row";
 import styles from "./food-list.module.css";
+
+function savedDetail(food: FoodListEntry) {
+  const energy = energyText(food.kcal);
+  if (food.kind === "portion" && food.gramsLabel) {
+    return `${energy} / ${food.gramsLabel}`;
+  }
+
+  return `${energy} / 100 g`;
+}
 
 export function SavedFoodList({ foods }: { foods: FoodListEntry[] }) {
   return (
-    <FoodGroups foods={foods}>
-      {(food) => (
-        <li key={food.listKey ?? `food:${food.id}`} className={styles.entry}>
-          <FoodRow food={food} showId />
+    <ul className={styles.list}>
+      {foods.map((food) => (
+        <li className={styles.entry} key={food.listKey ?? `food:${food.id}`}>
+          <FoodRow food={food} detail={savedDetail(food)} />
           {food.kind === "portion" && food.portionId ? (
-            <form className={styles.removeForm} method="post" action="/api/portions">
+            <form method="post" action="/api/portions">
               <input type="hidden" name="portionId" value={food.portionId} />
               <input type="hidden" name="intent" value="remove" />
-              <button className={styles.remove} type="submit" aria-label={`Remove ${food.name}`}>
+              <button className={styles.remove} type="submit">
                 Remove
               </button>
             </form>
           ) : (
-            <form className={styles.removeForm} method="post" action="/api/ingredients">
+            <form method="post" action="/api/ingredients">
               <input type="hidden" name="foodId" value={food.id} />
               <input type="hidden" name="intent" value="remove" />
-              <button className={styles.remove} type="submit" aria-label={`Unsave ${food.name}`}>
-                Unsave
+              <button className={styles.remove} type="submit">
+                Remove
               </button>
             </form>
           )}
         </li>
-      )}
-    </FoodGroups>
+      ))}
+    </ul>
   );
 }
