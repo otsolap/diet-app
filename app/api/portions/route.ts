@@ -7,6 +7,7 @@ import {
   portionId,
   portionName,
   removePortion,
+  updatePortion,
 } from "@/src/lib/portions";
 
 export async function POST(request: Request) {
@@ -30,6 +31,22 @@ export async function POST(request: Request) {
     }
 
     return redirectTo(request, "/saved-ingredients");
+  }
+
+  if (field("intent") === "update") {
+    const id = portionId(field("portionId"));
+    const name = portionName(field("name"));
+    const grams = portionGrams(field("grams"));
+    if (!id || name === null || grams === null) {
+      return redirectTo(request, id ? `/portions/${id}?error=values` : "/saved-ingredients");
+    }
+
+    const updated = await updatePortion(user.id, id, name, grams);
+    if (!updated) {
+      return redirectTo(request, "/saved-ingredients");
+    }
+
+    return redirectTo(request, `/portions/${id}`);
   }
 
   const id = foodId(field("foodId"));

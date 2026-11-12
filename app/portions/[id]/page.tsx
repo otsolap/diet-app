@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import styles from "@/app/foods/foods.module.css";
+import { primaryButtonClass } from "@/src/components/button/button";
 import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
 import { requireUser } from "@/src/lib/auth";
 import { getPortion, portionId } from "@/src/lib/portions";
@@ -14,6 +15,14 @@ function energyLabel(kcal: number) {
   return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
 }
 
+function gramsInput(grams: number) {
+  return new Intl.NumberFormat("en", { maximumFractionDigits: 2, useGrouping: false }).format(grams);
+}
+
+function firstValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 function PortionMissing() {
   return (
     <main className={styles.page}>
@@ -23,10 +32,17 @@ function PortionMissing() {
   );
 }
 
-async function PortionView({ params }: { params: Promise<{ id: string }> }) {
+async function PortionView({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await connection();
   const user = await requireUser();
   const { id } = await params;
+  const query = await searchParams;
   const parsed = portionId(id);
   if (!parsed) {
     return <PortionMissing />;
@@ -47,6 +63,32 @@ async function PortionView({ params }: { params: Promise<{ id: string }> }) {
       <p className={styles.source}>
         From <Link href={`/ingredients/${portion.foodId}`}>{portion.foodName}</Link>
       </p>
+      <form className={styles.form} method="post" action="/api/portions">
+        <input type="hidden" name="intent" value="update" />
+        <input type="hidden" name="portionId" value={portion.id} />
+        <label className={styles.field}>
+          Name
+          <input name="name" type="text" maxLength={80} required defaultValue={portion.name} />
+        </label>
+        <label className={styles.field}>
+          Grams
+          <input
+            name="grams"
+            type="number"
+            required
+            min={0.1}
+            max={9999}
+            step={0.1}
+            defaultValue={gramsInput(portion.grams)}
+          />
+        </label>
+        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
+          Update
+        </button>
+      </form>
+      {firstValue(query.error) === "values" ? (
+        <p className={styles.error}>Enter a name and a weight in grams.</p>
+      ) : null}
       <p className={styles.kcal}>
         {portion.kcal === null ? "No energy value" : energyLabel(portion.kcal)}
       </p>
@@ -89,7 +131,13 @@ async function PortionView({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-export default function PortionPage({ params }: { params: Promise<{ id: string }> }) {
+export default function PortionPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   return (
     <Suspense
       fallback={
@@ -99,7 +147,7 @@ export default function PortionPage({ params }: { params: Promise<{ id: string }
         </main>
       }
     >
-      <PortionView params={params} />
+      <PortionView params={params} searchParams={searchParams} />
     </Suspense>
   );
 }

@@ -264,6 +264,17 @@ export async function createPortion(userId: string, foodId: number, name: string
   return id;
 }
 
+export async function updatePortion(userId: string, id: string, name: string, grams: number) {
+  const result = await query(
+    `UPDATE portion
+     SET name = $3, grams = $4
+     WHERE id = $1 AND user_id = $2`,
+    [id, userId, name, grams],
+  );
+
+  return result.rowCount === 1;
+}
+
 export async function removePortion(userId: string, id: string) {
   const owned = await query(
     "SELECT 1 AS found FROM portion WHERE id = $1 AND user_id = $2",
