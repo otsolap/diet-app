@@ -294,6 +294,15 @@
 	color: var(--color-secondary-light);
 }
 
+.controls {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-single);
+	width: 100%;
+	min-width: 0;
+	max-width: 20rem;
+}
+
 .saveBlock {
 	display: flex;
 	flex-direction: column;
