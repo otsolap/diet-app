@@ -10,6 +10,7 @@ const FOOD_MATCH_SQL = `(
   strpos(lower(f.name_en), lower($1)) > 0
   OR strpos(lower(f.name_fi), lower($1)) > 0
   OR strpos(lower(f.name_sv), lower($1)) > 0
+  OR f.id::text = $1
 ) AND ${FOOD_NAME_SQL} IS NOT NULL`;
 
 export type FoodListItem = {
@@ -30,12 +31,26 @@ export type FoodNutrient = {
   share: string | null;
 };
 
+export type FoodUnitChoice = {
+  code: string;
+  label: string;
+  grams: number;
+};
+
+export type FoodNutrientBasis = {
+  label: string;
+  per100: number;
+  share: string | null;
+};
+
 export type FoodDetail = {
   id: number;
   name: string;
   kcal: number | null;
   foodUseClass: string | null;
   nutrients: FoodNutrient[];
+  basis: FoodNutrientBasis[];
+  units: FoodUnitChoice[];
 };
 
 export type FoodDetailResult = { food: FoodDetail } | { missing: true } | { error: string };
@@ -87,9 +102,35 @@ function grams(value: string | null) {
   return number;
 }
 
+const UNIT_ORDER = [
+  "KPL_S",
+  "KPL_M",
+  "KPL_L",
+  "KPL_VALM",
+  "PORTS",
+  "PORTM",
+  "PORTL",
+  "PORTTBL",
+  "PORT1000KJ",
+  "TL",
+  "RKL",
+  "DL",
+  "L",
+  "KG",
+];
+
 function amountLabel(value: number) {
   const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
   return `${text} g`;
+}
+
+function unitGramsLabel(value: number) {
+  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(value);
+  return `${text} g`;
+}
+
+function unitLabel(name: string, grams: number) {
+  return `1 ${name} (${unitGramsLabel(grams)})`;
 }
 
 function shareLabel(value: number, kcalPerGram: number, kcal: number | null) {
@@ -171,11 +212,12 @@ export async function searchFoods(term: string, page = 1): Promise<FoodSearchRes
        WHERE ${FOOD_MATCH_SQL}
        ORDER BY
          CASE
+           WHEN f.id::text = $1 THEN 0
            WHEN starts_with(lower(f.name_en), lower($1))
              OR starts_with(lower(f.name_fi), lower($1))
              OR starts_with(lower(f.name_sv), lower($1))
-           THEN 0
-           ELSE 1
+           THEN 1
+           ELSE 2
          END,
          lower(${FOOD_NAME_SQL})
        LIMIT $2 OFFSET $3`,
@@ -244,14 +286,64 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
       return { missing: true };
     }
 
-    const values = await query<NutrientRow>(
-      `SELECT component, value::text AS value
-       FROM fineli_component_value
-       WHERE food_id = $1 AND component = ANY($2::text[])`,
-      [id, DETAIL_NUTRIENTS.map((item) => item.code)],
-    );
+    const [values, unitRows] = await Promise.all([
+      query<NutrientRow>(
+        `SELECT component, value::text AS value
+         FROM fineli_component_value
+         WHERE food_id = $1 AND component = ANY($2::text[])`,
+        [id, DETAIL_NUTRIENTS.map((item) => item.code)],
+      ),
+      query<{ code: string; name: string; grams: string }>(
+        `SELECT u.code, u.name, fu.grams::text AS grams
+         FROM fineli_food_unit fu
+         JOIN fineli_unit u ON u.code = fu.code
+         WHERE fu.food_id = $1`,
+        [id],
+      ),
+    ]);
     const byCode = new Map(values.rows.map((item) => [item.component, item.value]));
     const kcal = kcalFromKj(row.energy_kj);
+    const nutrients = DETAIL_NUTRIENTS.flatMap((item) => {
+      const value = grams(byCode.get(item.code) ?? null);
+      if (value === null) {
+        return [];
+      }
+
+      return [
+        {
+          label: item.label,
+          amount: amountLabel(value),
+          share: shareLabel(value, item.kcalPerGram, kcal),
+        },
+      ];
+    });
+    const basis = DETAIL_NUTRIENTS.flatMap((item) => {
+      const value = grams(byCode.get(item.code) ?? null);
+      if (value === null) {
+        return [];
+      }
+
+      return [
+        {
+          label: item.label,
+          per100: value,
+          share: shareLabel(value, item.kcalPerGram, kcal),
+        },
+      ];
+    });
+    const units = unitRows.rows.flatMap((unit) => {
+      const weight = Number(unit.grams);
+      if (!Number.isFinite(weight) || weight <= 0) {
+        return [];
+      }
+
+      return [{ code: unit.code, label: unitLabel(unit.name, weight), grams: weight }];
+    });
+    units.sort((a, b) => {
+      const aIndex = UNIT_ORDER.indexOf(a.code);
+      const bIndex = UNIT_ORDER.indexOf(b.code);
+      return (aIndex === -1 ? UNIT_ORDER.length : aIndex) - (bIndex === -1 ? UNIT_ORDER.length : bIndex);
+    });
 
     return {
       food: {
@@ -259,20 +351,9 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
         name,
         kcal,
         foodUseClass: row.food_use_class,
-        nutrients: DETAIL_NUTRIENTS.flatMap((item) => {
-          const value = grams(byCode.get(item.code) ?? null);
-          if (value === null) {
-            return [];
-          }
-
-          return [
-            {
-              label: item.label,
-              amount: amountLabel(value),
-              share: shareLabel(value, item.kcalPerGram, kcal),
-            },
-          ];
-        }),
+        nutrients,
+        basis,
+        units,
       },
     };
   } catch {
