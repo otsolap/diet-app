@@ -30,17 +30,28 @@ function customGrams(value: string) {
   return grams;
 }
 
+function energyText(kcal: number) {
+  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
+}
+
+function hundredLabel(kcalPer100: number | null) {
+  if (kcalPer100 === null) {
+    return "100 g";
+  }
+
+  return `100 g (${energyText(kcalPer100)})`;
+}
+
 function energyLabel(kcal: number | null, grams: number, per100: boolean) {
   if (kcal === null) {
     return "No energy value";
   }
 
-  const energy = `${new Intl.NumberFormat("en").format(kcal)} kcal`;
   if (per100) {
-    return `${energy} per 100 g`;
+    return `${energyText(kcal)} per 100 g`;
   }
 
-  return `${energy} for ${weightLabel(grams)}`;
+  return `${energyText(kcal)} for ${weightLabel(grams)}`;
 }
 
 export function PortionSize({
@@ -78,7 +89,7 @@ export function PortionSize({
               {unit.label}
             </option>
           ))}
-          <option value="100">100 g</option>
+          <option value="100">{hundredLabel(kcalPer100)}</option>
           <option value="custom">Custom</option>
         </select>
       </label>
