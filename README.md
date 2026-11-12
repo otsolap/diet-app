@@ -46,13 +46,13 @@ To load the production database, copy `DATABASE_URL` from the Vercel project set
 DATABASE_URL='paste-the-production-url' npm run fineli:import
 ```
 
-Search is at `/foods`. One food is at `/foods/{id}`. Both pages are public. Values are per 100 g. The package stores energy in kJ. The pages show kcal as kJ divided by 4.184.
+Search is at `/ingredients`. One food is at `/ingredients/{id}`. Both pages are public. Values are per 100 g. The package stores energy in kJ. The pages show kcal as kJ divided by 4.184.
 
 Food data: Finnish Institute for Health and Welfare, [Fineli](https://fineli.fi/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Access
 
-These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, `/foods`, `/foods/{id}`, and `/invite/{token}`. Other pages redirect to `/login`.
+These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, `/ingredients`, `/ingredients/{id}`, and `/invite/{token}`. Other pages redirect to `/login`. `/foods` redirects to `/ingredients`.
 
 
 ## Prerequisites
