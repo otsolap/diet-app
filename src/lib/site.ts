@@ -19,19 +19,14 @@ export const site = {
     callToAction: { href: "/login", title: "Sign in" } satisfies SiteLink,
   },
   footer: {
-    pages: {
-      title: "Pages",
-      links: [
-        { href: "/", title: "Home" },
-        { href: "/ingredients", title: "Search" },
-        { href: "/about", title: "About" },
-        { href: "/login", title: "Sign in" },
-      ] satisfies SiteLink[],
-    },
     brand: {
-      title: "About",
+      title: "Diet app",
       description:
         "Diet app helps you search foods and save meals. Food data comes from Fineli, the Finnish national food composition database.",
+    },
+    about: {
+      title: "About me",
+      link: { href: "/about", title: "About" } satisfies SiteLink,
     },
     subFooter: {
       title: "Diet app",

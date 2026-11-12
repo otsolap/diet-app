@@ -28,6 +28,22 @@
 	margin-bottom: var(--spacing-single);
 }
 
+.logo {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-single);
+}
+
+.logoMark {
+	width: 4rem;
+	height: 4rem;
+}
+
+.logoTitle {
+	font-size: 1.5rem;
+	font-weight: 900;
+}
+
 .heading {
 	padding-top: var(--spacing-single);
 	font-weight: 900;

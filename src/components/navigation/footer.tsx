@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { SocialLinks } from "@/src/components/social-links/social-links";
-import { getCurrentUser } from "@/src/lib/auth";
 import { site, type SiteLink } from "@/src/lib/site";
 import styles from "./footer.module.css";
 
@@ -54,47 +53,26 @@ async function SubFooterYear() {
   return <SubFooter year={new Date().getFullYear()} />;
 }
 
-function PageLinks({ links }: { links: SiteLink[] }) {
-  return (
-    <div className={styles.links}>
-      {links.map((link) => (
-        <FooterAnchor key={link.href} className={styles.link} link={link} />
-      ))}
-    </div>
-  );
-}
-
-async function FooterPageLinks() {
-  let user = null;
-
-  try {
-    user = await getCurrentUser();
-  } catch {
-    user = null;
-  }
-
-  const links = user
-    ? site.footer.pages.links.filter((link) => link.href !== "/login")
-    : site.footer.pages.links;
-
-  return <PageLinks links={links} />;
-}
-
 export function Footer() {
-  const { pages, brand } = site.footer;
+  const { brand, about } = site.footer;
 
   return (
     <footer className={styles.footer}>
       <div className={styles.columns}>
         <div className={styles.column}>
-          <h3 className={styles.heading}>{pages.title}</h3>
-          <Suspense fallback={<PageLinks links={pages.links} />}>
-            <FooterPageLinks />
-          </Suspense>
+          <div className={styles.logo}>
+            <img className={styles.logoMark} src="/logo.png" alt="" width={192} height={192} />
+            <span className={styles.logoTitle}>{brand.title}</span>
+          </div>
+          <p className={styles.text}>{brand.description}</p>
         </div>
         <div className={styles.column}>
-          <h3 className={styles.heading}>{brand.title}</h3>
-          <p className={styles.text}>{brand.description}</p>
+          <h3 className={styles.heading}>{about.title}</h3>
+          <div className={styles.links}>
+            <Link className={styles.link} href={about.link.href}>
+              {about.link.title}
+            </Link>
+          </div>
           <SocialLinks />
         </div>
       </div>
