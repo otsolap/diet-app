@@ -272,6 +272,74 @@
 	color: var(--color-error-light);
 }
 
+.dialog {
+	width: calc(100% - var(--spacing-double));
+	max-width: 24rem;
+	margin: auto;
+	padding: var(--spacing-double);
+	border: .0625rem solid var(--color-primary);
+	border-radius: .5rem;
+	background-color: var(--color-primary-semidark);
+	color: var(--color-white);
+}
+
+.dialog::backdrop {
+	background-color: rgb(0 0 0 / 55%);
+}
+
+.dialogHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-single);
+	margin-bottom: var(--spacing-single);
+}
+
+.dialogClose {
+	padding: var(--spacing-half) 0;
+	border: 0;
+	background-color: transparent;
+	color: var(--color-secondary-light);
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.dialogClose:hover,
+.dialogClose:focus-visible {
+	color: var(--color-secondary);
+}
+
+.portionTitle {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.portionForm {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-single);
+	width: 100%;
+}
+
+.source {
+	margin: 0;
+}
+
+.remove {
+	width: fit-content;
+	padding: var(--spacing-half) 0;
+	border: 0;
+	background-color: transparent;
+	color: var(--color-secondary-light);
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.remove:hover,
+.remove:focus-visible {
+	color: var(--color-secondary);
+}
+
 /* Tablet styles */
 @media (width >= 768px) {
 	.form {

@@ -6,6 +6,7 @@ import { FoodList } from "@/src/components/food-list/food-list";
 import { getCurrentUser } from "@/src/lib/auth";
 import { FOOD_PAGE_SIZE, searchFoods } from "@/src/lib/food-search";
 import { listSavedFoodIds } from "@/src/lib/ingredients";
+import { portionEntry, searchPortions } from "@/src/lib/portions";
 import styles from "./foods.module.css";
 
 export const metadata = {
@@ -51,16 +52,21 @@ function countLabel(total: number, page: number) {
   return `${start}–${end} of ${total} foods`;
 }
 
-async function savedFoodIds() {
+async function viewerFoods(term: string) {
   try {
     const user = await getCurrentUser();
     if (!user) {
-      return new Set<number>();
+      return { savedIds: new Set<number>(), portions: [] };
     }
 
-    return new Set(await listSavedFoodIds(user.id));
+    const [savedIds, portions] = await Promise.all([
+      listSavedFoodIds(user.id),
+      searchPortions(user.id, term).catch(() => []),
+    ]);
+
+    return { savedIds: new Set(savedIds), portions: portions.map(portionEntry) };
   } catch {
-    return new Set<number>();
+    return { savedIds: new Set<number>(), portions: [] };
   }
 }
 
@@ -115,7 +121,8 @@ async function FoodSearch({
   const total = result && "total" in result ? result.total : 0;
   const page = result && "page" in result ? result.page : 1;
   const pageCount = result && "pageCount" in result ? result.pageCount : 0;
-  const savedIds = await savedFoodIds();
+  const viewer = term && !error ? await viewerFoods(term) : { savedIds: new Set<number>(), portions: [] };
+  const rows = [...foods, ...viewer.portions];
 
   return (
     <main className={styles.page}>
@@ -137,14 +144,14 @@ async function FoodSearch({
         </button>
       </form>
       {error ? <p className={styles.error}>{error}</p> : null}
-      {foods.length > 0 ? (
+      {rows.length > 0 ? (
         <>
-          <p className={styles.count}>{countLabel(total, page)}</p>
-          <FoodList foods={foods} savedIds={savedIds} />
+          {foods.length > 0 ? <p className={styles.count}>{countLabel(total, page)}</p> : null}
+          <FoodList foods={rows} savedIds={viewer.savedIds} />
           <FoodPages term={term} page={page} pageCount={pageCount} />
         </>
       ) : null}
-      {term && !error && foods.length === 0 ? <p>No foods match that search.</p> : null}
+      {term && !error && rows.length === 0 ? <p>No foods match that search.</p> : null}
     </main>
   );
 }

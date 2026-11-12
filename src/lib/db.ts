@@ -94,6 +94,18 @@ function ensureSchema() {
       saved_at timestamptz NOT NULL DEFAULT now(),
       PRIMARY KEY (user_id, food_id)
     );
+
+    CREATE TABLE IF NOT EXISTS portion (
+      id uuid PRIMARY KEY,
+      user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      food_id integer NOT NULL REFERENCES fineli_food (id) ON DELETE RESTRICT,
+      name text NOT NULL,
+      grams numeric NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      CHECK (grams > 0)
+    );
+
+    CREATE INDEX IF NOT EXISTS portion_user_idx ON portion (user_id);
   `).then(
     () => undefined,
     (error: unknown) => {

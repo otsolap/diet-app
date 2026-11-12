@@ -212,6 +212,9 @@ async function main() {
          WHERE NOT (id = ANY($1::int[]))
            AND NOT EXISTS (
              SELECT 1 FROM saved_ingredient WHERE saved_ingredient.food_id = fineli_food.id
+           )
+           AND NOT EXISTS (
+             SELECT 1 FROM portion WHERE portion.food_id = fineli_food.id
            )`,
         [foods.map((food) => food.id)],
       );

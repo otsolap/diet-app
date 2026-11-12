@@ -4,6 +4,7 @@ import styles from "@/app/foods/foods.module.css";
 import { SavedFoodList } from "@/src/components/food-list/saved-food-list";
 import { requireUser } from "@/src/lib/auth";
 import { listSavedIngredients } from "@/src/lib/ingredients";
+import { listPortions, portionEntry } from "@/src/lib/portions";
 
 export const metadata = {
   title: "Saved",
@@ -20,7 +21,11 @@ function countLabel(total: number) {
 async function SavedIngredients() {
   await connection();
   const user = await requireUser();
-  const foods = await listSavedIngredients(user.id);
+  const [saved, portions] = await Promise.all([
+    listSavedIngredients(user.id),
+    listPortions(user.id),
+  ]);
+  const foods = [...saved, ...portions.map(portionEntry)];
 
   return (
     <main className={styles.page}>

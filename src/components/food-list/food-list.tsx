@@ -13,8 +13,11 @@ export function FoodList({
   return (
     <FoodGroups foods={foods}>
       {(food) => (
-        <li key={food.id}>
-          <FoodRow food={food} saved={savedIds?.has(food.id) ?? false} />
+        <li key={food.listKey ?? `food:${food.id}`}>
+          <FoodRow
+            food={food}
+            saved={food.kind !== "portion" && (savedIds?.has(food.id) ?? false)}
+          />
         </li>
       )}
     </FoodGroups>

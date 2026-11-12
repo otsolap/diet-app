@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { primaryButtonClass } from "@/src/components/button/button";
 import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
+import { PortionDialog } from "./portion-dialog";
 import { getCurrentUser } from "@/src/lib/auth";
 import { foodId, getFood, type FoodDetail, type FoodNutrient } from "@/src/lib/food-search";
 import { isIngredientSaved } from "@/src/lib/ingredients";
@@ -151,6 +152,27 @@ function FoodMissing() {
   );
 }
 
+function AddPortion({ foodId, signedIn }: { foodId: number; signedIn: boolean }) {
+  if (!signedIn) {
+    return (
+      <div className={styles.saveBlock}>
+        <button className={`${primaryButtonClass} ${styles.save}`} type="button" disabled>
+          Save a portion
+        </button>
+        <p className={styles.hint}>
+          <Link href="/login">Sign in</Link> to save a portion.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.saveBlock}>
+      <PortionDialog foodId={foodId} />
+    </div>
+  );
+}
+
 function SaveIngredient({
   foodId,
   signedIn,
@@ -214,6 +236,7 @@ function FoodView({
         {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}
       </p>
       <SaveIngredient foodId={food.id} signedIn={signedIn} saved={saved} />
+      <AddPortion foodId={food.id} signedIn={signedIn} />
       {food.nutrients.length > 0 ? (
         <div className={styles.detail}>
           <table className={styles.nutrients}>

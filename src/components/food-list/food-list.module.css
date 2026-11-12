@@ -84,11 +84,25 @@
 }
 
 .name {
+	display: flex;
+	align-items: baseline;
+	gap: var(--spacing-half);
 	min-width: 0;
 	overflow: hidden;
 	font-weight: 700;
+	white-space: nowrap;
+}
+
+.nameText {
+	min-width: 0;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.weight {
+	flex-shrink: 0;
+	font-weight: 400;
 }
 
 .id {

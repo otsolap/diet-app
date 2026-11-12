@@ -8,6 +8,12 @@ export type FoodListEntry = {
   kcal: number | null;
   foodUseClass: string | null;
   foodUseParent: string | null;
+  listKey?: string;
+  href?: string;
+  gramsLabel?: string;
+  idLabel?: string;
+  kind?: "food" | "portion";
+  portionId?: string;
 };
 
 function energyLabel(kcal: number) {
@@ -26,11 +32,14 @@ export function FoodRow({
   return (
     <Link
       className={`${styles.item} ${showId ? styles.itemWithId : ""}`}
-      href={`/foods/${food.id}`}
+      href={food.href ?? `/foods/${food.id}`}
     >
-      {showId ? <span className={styles.id}>{food.id}</span> : null}
+      {showId ? <span className={styles.id}>{food.idLabel ?? food.id}</span> : null}
       <FoodCategoryIcon category={food.foodUseClass} saved={saved} className={styles.icon} />
-      <span className={styles.name}>{food.name}</span>
+      <span className={styles.name}>
+        <span className={styles.nameText}>{food.name}</span>
+        {!showId && food.gramsLabel ? <span className={styles.weight}>{food.gramsLabel}</span> : null}
+      </span>
       <span className={styles.use}>{food.foodUseClass}</span>
       <span className={styles.energy}>
         {food.kcal === null ? "No energy value" : energyLabel(food.kcal)}
