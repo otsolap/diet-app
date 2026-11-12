@@ -23,7 +23,10 @@ export async function POST(request: Request) {
   if (field("intent") === "remove") {
     const id = portionId(field("portionId"));
     if (id) {
-      await removePortion(user.id, id);
+      const result = await removePortion(user.id, id);
+      if (result === "used") {
+        return redirectTo(request, "/saved-ingredients?error=used");
+      }
     }
 
     return redirectTo(request, "/saved-ingredients");
@@ -33,12 +36,12 @@ export async function POST(request: Request) {
   const name = portionName(field("name"));
   const grams = portionGrams(field("grams"));
   if (id === null || name === null || grams === null) {
-    return redirectTo(request, id === null ? "/foods" : `/foods/${id}`);
+    return redirectTo(request, id === null ? "/ingredients" : `/ingredients/${id}`);
   }
 
   const portion = await createPortion(user.id, id, name, grams);
   if (portion === null) {
-    return redirectTo(request, "/foods");
+    return redirectTo(request, "/ingredients");
   }
 
   return redirectTo(request, `/portions/${portion}`);

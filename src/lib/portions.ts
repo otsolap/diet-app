@@ -265,9 +265,24 @@ export async function createPortion(userId: string, foodId: number, name: string
 }
 
 export async function removePortion(userId: string, id: string) {
+  const owned = await query(
+    "SELECT 1 AS found FROM portion WHERE id = $1 AND user_id = $2",
+    [id, userId],
+  );
+  if (!owned.rows[0]) {
+    return "removed" as const;
+  }
+
+  const used = await query("SELECT 1 AS found FROM meal_item WHERE portion_id = $1", [id]);
+  if (used.rows[0]) {
+    return "used" as const;
+  }
+
   await query(
     `DELETE FROM portion
      WHERE id = $1 AND user_id = $2`,
     [id, userId],
   );
+
+  return "removed" as const;
 }

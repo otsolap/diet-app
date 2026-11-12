@@ -7,7 +7,7 @@ import { listSavedIngredients } from "@/src/lib/ingredients";
 import { listPortions, portionEntry } from "@/src/lib/portions";
 
 export const metadata = {
-  title: "Saved ingredients",
+  title: "Ingredients",
 };
 
 function countLabel(total: number) {
@@ -18,9 +18,18 @@ function countLabel(total: number) {
   return `${total} ingredients`;
 }
 
-async function SavedIngredients() {
+function firstValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+async function SavedIngredients({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await connection();
   const user = await requireUser();
+  const params = await searchParams;
   const [saved, portions] = await Promise.all([
     listSavedIngredients(user.id),
     listPortions(user.id),
@@ -29,30 +38,37 @@ async function SavedIngredients() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>Saved ingredients</h1>
+      <h1 className={styles.title}>Ingredients</h1>
+      {firstValue(params.error) === "used" ? (
+        <p className={styles.error}>That portion is in a meal. Remove it from the meal first.</p>
+      ) : null}
       {foods.length > 0 ? (
         <>
           <p className={styles.count}>{countLabel(foods.length)}</p>
           <SavedFoodList foods={foods} />
         </>
       ) : (
-        <p>You have no saved ingredients.</p>
+        <p>You have no ingredients.</p>
       )}
     </main>
   );
 }
 
-export default function SavedIngredientsPage() {
+export default function SavedIngredientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   return (
     <Suspense
       fallback={
         <main className={styles.page}>
-          <h1 className={styles.title}>Saved ingredients</h1>
+          <h1 className={styles.title}>Ingredients</h1>
           <p>Loading.</p>
         </main>
       }
     >
-      <SavedIngredients />
+      <SavedIngredients searchParams={searchParams} />
     </Suspense>
   );
 }
