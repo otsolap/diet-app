@@ -161,6 +161,7 @@
 		flex: 1 1 0;
 		max-width: none;
 		min-width: 0;
+		padding-top: var(--spacing-double);
 	}
 
 	.sub {
