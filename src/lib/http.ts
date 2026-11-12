@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser, type CurrentUser } from "@/src/lib/auth";
 
 const messages: Record<string, string> = {
   invalid: "Email or password is wrong.",
@@ -54,4 +55,21 @@ export async function readForm(request: Request) {
     const value = form.get(name);
     return typeof value === "string" ? value : "";
   };
+}
+
+type FormField = (name: string) => string;
+
+export async function requireFormUser(
+  request: Request,
+): Promise<{ ok: true; user: CurrentUser; field: FormField } | { ok: false; response: NextResponse }> {
+  if (!isSameOrigin(request)) {
+    return { ok: false, response: redirectTo(request, "/login?error=origin") };
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return { ok: false, response: redirectTo(request, "/login?error=signedout") };
+  }
+
+  return { ok: true, user, field: await readForm(request) };
 }

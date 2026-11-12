@@ -1,6 +1,5 @@
-import { getCurrentUser } from "@/src/lib/auth";
 import { foodId } from "@/src/lib/food-search";
-import { isSameOrigin, readForm, redirectTo } from "@/src/lib/http";
+import { redirectTo, requireFormUser } from "@/src/lib/http";
 import { removeIngredient, saveIngredient } from "@/src/lib/ingredients";
 
 function safeReturn(value: string) {
@@ -21,16 +20,12 @@ function safeReturn(value: string) {
 }
 
 export async function POST(request: Request) {
-  if (!isSameOrigin(request)) {
-    return redirectTo(request, "/login?error=origin");
+  const gate = await requireFormUser(request);
+  if (!gate.ok) {
+    return gate.response;
   }
 
-  const user = await getCurrentUser();
-  if (!user) {
-    return redirectTo(request, "/login?error=signedout");
-  }
-
-  const field = await readForm(request);
+  const { user, field } = gate;
   const id = foodId(field("foodId"));
   if (field("intent") === "remove") {
     if (id !== null) {
