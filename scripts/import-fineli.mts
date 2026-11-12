@@ -109,12 +109,16 @@ async function main() {
 
     const classes = readTable(dir, "fuclass_EN.csv");
     const foodRows = readTable(dir, "food.csv");
+    const unitNames = readTable(dir, "foodunit_EN.csv");
+    const foodUnits = readTable(dir, "foodaddunit.csv");
     expectHeader(classes.header, ["THSCODE", "DESCRIPT", "LANG"], "fuclass_EN.csv");
     expectHeader(
       foodRows.header,
       ["FOODID", "FOODNAME", "FOODTYPE", "PROCESS", "EDPORT", "IGCLASS", "IGCLASSP", "FUCLASS", "FUCLASSP"],
       "food.csv",
     );
+    expectHeader(unitNames.header, ["THSCODE", "DESCRIPT", "LANG"], "foodunit_EN.csv");
+    expectHeader(foodUnits.header, ["FOODID", "FOODUNIT", "MASS"], "foodaddunit.csv");
 
     const classNames = new Map<string, string>();
     for (const row of classes.rows) {
@@ -159,6 +163,29 @@ async function main() {
         parentName: classNames.get(use.parentCode) ?? use.parentCode,
       });
     }
+
+    const unitNameByCode = new Map<string, string>();
+    for (const row of unitNames.rows) {
+      const code = row[0]?.trim() ?? "";
+      const name = row[1]?.trim() ?? "";
+      if (!code || !name || row[2] !== "EN") {
+        throw new Error("A Fineli unit name is not valid.");
+      }
+      unitNameByCode.set(code, name);
+    }
+
+    const portionByKey = new Map<string, { id: number; code: string; grams: string }>();
+    for (const row of foodUnits.rows) {
+      const id = foodId(row[0]);
+      const code = row[1]?.trim() ?? "";
+      const grams = componentValue(row[2]);
+      if (!names.has(id) || !code || !unitNameByCode.has(code) || !grams || Number(grams) <= 0) {
+        continue;
+      }
+      portionByKey.set(`${id}:${code}`, { id, code, grams });
+    }
+    const portionRows = [...portionByKey.values()];
+    const usedUnitCodes = [...new Set(portionRows.map((row) => row.code))];
 
     const foods = [...names.values()];
     const componentRows = values.rows.map((row) => {
@@ -215,6 +242,9 @@ async function main() {
            )
            AND NOT EXISTS (
              SELECT 1 FROM portion WHERE portion.food_id = fineli_food.id
+           )
+           AND NOT EXISTS (
+             SELECT 1 FROM meal_item WHERE meal_item.food_id = fineli_food.id
            )`,
         [foods.map((food) => food.id)],
       );
@@ -233,11 +263,29 @@ async function main() {
         );
       }
 
+      await sql("DELETE FROM fineli_food_unit");
+      await sql("DELETE FROM fineli_unit");
+      await sql(
+        `INSERT INTO fineli_unit (code, name)
+         SELECT * FROM UNNEST($1::text[], $2::text[])`,
+        [usedUnitCodes, usedUnitCodes.map((code) => unitNameByCode.get(code) ?? code)],
+      );
+      await sql(
+        `INSERT INTO fineli_food_unit (food_id, code, grams)
+         SELECT id, code, grams::numeric
+         FROM UNNEST($1::int[], $2::text[], $3::text[]) AS row(id, code, grams)`,
+        [
+          portionRows.map((row) => row.id),
+          portionRows.map((row) => row.code),
+          portionRows.map((row) => row.grams),
+        ],
+      );
+
       await sql("INSERT INTO fineli_release (release) VALUES ($1)", [RELEASE]);
     });
 
     console.log(
-      `Loaded Fineli release ${RELEASE}: ${foods.length} foods, ${componentRows.length} component values.`,
+      `Loaded Fineli release ${RELEASE}: ${foods.length} foods, ${componentRows.length} component values, ${portionRows.length} portion sizes.`,
     );
   } finally {
     rmSync(dir, { recursive: true, force: true });
