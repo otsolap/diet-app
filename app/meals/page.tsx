@@ -1,13 +1,16 @@
-import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import foodStyles from "@/app/foods/foods.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { TextField } from "@/src/components/form/text-field";
+import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
 import { requireUser } from "@/src/lib/auth";
+import { formatKcal } from "@/src/lib/format";
 import { listMeals, type MealSummary } from "@/src/lib/meals";
 import styles from "./meals.module.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Meals",
 };
 
@@ -27,16 +30,12 @@ function itemLabel(total: number) {
   return `${total} ingredients`;
 }
 
-function energyLabel(kcal: number) {
-  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
-}
-
 function mealMeta(meal: MealSummary) {
   if (meal.kcal === null) {
     return itemLabel(meal.items);
   }
 
-  return `${itemLabel(meal.items)} · ${energyLabel(meal.kcal)}`;
+  return `${itemLabel(meal.items)} · ${formatKcal(meal.kcal)}`;
 }
 
 async function MealList() {
@@ -45,17 +44,20 @@ async function MealList() {
   const meals = await listMeals(user.id);
 
   return (
-    <main className={foodStyles.page}>
-      <h1 className={foodStyles.title}>Meals</h1>
+    <PageMain>
+      <PageTitle>Meals</PageTitle>
       <form className={foodStyles.form} method="post" action="/api/meals">
         <input type="hidden" name="intent" value="create" />
-        <label className={foodStyles.field}>
-          Name
-          <input name="name" type="text" maxLength={80} required placeholder="Egg omelette" />
-        </label>
-        <button className={`${primaryButtonClass} ${foodStyles.submit}`} type="submit">
-          Add meal
-        </button>
+        <TextField
+          className={foodStyles.field}
+          label="Name"
+          name="name"
+          type="text"
+          maxLength={80}
+          required
+          placeholder="Egg omelette"
+        />
+        <Button className={foodStyles.submit}>Add meal</Button>
       </form>
       {meals.length > 0 ? (
         <>
@@ -74,21 +76,14 @@ async function MealList() {
       ) : (
         <p>You have no meals.</p>
       )}
-    </main>
+    </PageMain>
   );
 }
 
 export default function MealsPage() {
   return (
-    <Suspense
-      fallback={
-        <main className={foodStyles.page}>
-          <h1 className={foodStyles.title}>Meals</h1>
-          <p>Loading.</p>
-        </main>
-      }
-    >
+    <DynamicPage title="Meals">
       <MealList />
-    </Suspense>
+    </DynamicPage>
   );
 }

@@ -1,11 +1,13 @@
+import { formatKcal } from "@/src/lib/format";
+import type { FoodListEntry } from "@/src/lib/food-list";
 import { FoodGroups } from "./food-groups";
-import { energyText, FoodRow, type FoodListEntry } from "./food-row";
+import { FoodRow } from "./food-row";
 import styles from "./food-list.module.css";
 
 export type { FoodListEntry };
 
 function searchDetail(food: FoodListEntry) {
-  const energy = energyText(food.kcal);
+  const energy = formatKcal(food.kcal);
   if (food.kind === "portion" && food.gramsLabel) {
     return `${food.gramsLabel} · ${energy}`;
   }

@@ -1,24 +1,20 @@
-import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import styles from "@/app/foods/foods.module.css";
+import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
 import { SavedFoodList } from "@/src/components/food-list/saved-food-list";
 import { requireUser } from "@/src/lib/auth";
 import { listSavedIngredients } from "@/src/lib/ingredients";
 import { listPortions, portionEntry } from "@/src/lib/portions";
+import { firstQueryValue } from "@/src/lib/query";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Ingredients",
 };
 
-function firstValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 async function SavedIngredients({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: Pick<PageProps<"/saved-ingredients">, "searchParams">) {
   await connection();
   const user = await requireUser();
   const params = await searchParams;
@@ -29,35 +25,28 @@ async function SavedIngredients({
   const foods = [...saved, ...portions.map(portionEntry)];
 
   return (
-    <main className={styles.page}>
-      <h1 className={styles.title}>Ingredients</h1>
-      {firstValue(params.error) === "used" ? (
+    <PageMain>
+      <PageTitle>Ingredients</PageTitle>
+      {firstQueryValue(params.error) === "used" ? (
         <p className={styles.error}>That portion is in a meal. Remove it from the meal first.</p>
       ) : null}
       {foods.length > 0 ? (
-        <SavedFoodList foods={foods} />
+        <div className={styles.controls}>
+          <SavedFoodList foods={foods} />
+        </div>
       ) : (
         <p>You have no ingredients.</p>
       )}
-    </main>
+    </PageMain>
   );
 }
 
 export default function SavedIngredientsPage({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: PageProps<"/saved-ingredients">) {
   return (
-    <Suspense
-      fallback={
-        <main className={styles.page}>
-          <h1 className={styles.title}>Ingredients</h1>
-          <p>Loading.</p>
-        </main>
-      }
-    >
+    <DynamicPage title="Ingredients">
       <SavedIngredients searchParams={searchParams} />
-    </Suspense>
+    </DynamicPage>
   );
 }

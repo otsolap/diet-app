@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useRef, type MouseEvent } from "react";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { TextField } from "@/src/components/form/text-field";
 import styles from "@/app/foods/foods.module.css";
 
 export function PortionDialog({
@@ -45,9 +46,9 @@ export function PortionDialog({
 
   return (
     <>
-      <button className={`${primaryButtonClass} ${styles.save}`} type="button" onClick={open}>
+      <Button className={styles.save} type="button" onClick={open}>
         Save a portion
-      </button>
+      </Button>
       <dialog
         ref={dialogRef}
         className={styles.dialog}
@@ -64,26 +65,29 @@ export function PortionDialog({
         </div>
         <form className={styles.portionForm} method="post" action="/api/portions">
           <input type="hidden" name="foodId" value={foodId} />
-          <label className={styles.field}>
-            Name
-            <input ref={nameRef} name="name" type="text" required maxLength={80} placeholder="Teaspoon" />
-          </label>
-          <label className={styles.field}>
-            Grams
-            <input
-              ref={gramsRef}
-              name="grams"
-              type="number"
-              required
-              min={0.1}
-              max={9999}
-              step={0.1}
-              placeholder="5"
-            />
-          </label>
-          <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-            Save portion
-          </button>
+          <TextField
+            inputRef={nameRef}
+            className={styles.field}
+            label="Name"
+            name="name"
+            type="text"
+            required
+            maxLength={80}
+            placeholder="Teaspoon"
+          />
+          <TextField
+            inputRef={gramsRef}
+            className={styles.field}
+            label="Grams"
+            name="grams"
+            type="number"
+            required
+            min={0.1}
+            max={9999}
+            step={0.1}
+            placeholder="5"
+          />
+          <Button className={styles.submit}>Save portion</Button>
         </form>
       </dialog>
     </>

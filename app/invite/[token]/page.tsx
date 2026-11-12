@@ -1,31 +1,30 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { TextField } from "@/src/components/form/text-field";
 import { findOpenInvite } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
+import { firstQueryValue } from "@/src/lib/query";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Accept invite",
 };
-
-function firstCode(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 async function AcceptForm({
   token,
   searchParams,
 }: {
   token: string;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: PageProps<"/invite/[token]">["searchParams"];
 }) {
   await connection();
   const invite = await findOpenInvite(token);
   const params = await searchParams;
-  const message = errorMessage(firstCode(params.error));
+  const message = errorMessage(firstQueryValue(params.error));
 
   if (!invite) {
     return (
@@ -42,29 +41,25 @@ async function AcceptForm({
       <ErrorText message={message} />
       <form className={styles.form} method="post" action="/api/auth/accept">
         <input type="hidden" name="token" value={token} />
-        <label className={styles.field}>
-          Password
-          <input
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            minLength={12}
-            required
-          />
-        </label>
-        <label className={styles.field}>
-          Confirm password
-          <input
-            name="confirm"
-            type="password"
-            autoComplete="new-password"
-            minLength={12}
-            required
-          />
-        </label>
-        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-          Create account
-        </button>
+        <TextField
+          className={styles.field}
+          label="Password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          minLength={12}
+          required
+        />
+        <TextField
+          className={styles.field}
+          label="Confirm password"
+          name="confirm"
+          type="password"
+          autoComplete="new-password"
+          minLength={12}
+          required
+        />
+        <Button className={styles.submit}>Create account</Button>
       </form>
     </AuthShell>
   );
@@ -73,10 +68,7 @@ async function AcceptForm({
 export default function AcceptInvitePage({
   params,
   searchParams,
-}: {
-  params: Promise<{ token: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: PageProps<"/invite/[token]">) {
   return (
     <Suspense fallback={<AuthShell title="Create your account">Loading.</AuthShell>}>
       <AcceptInviteLoader params={params} searchParams={searchParams} />
@@ -87,10 +79,7 @@ export default function AcceptInvitePage({
 async function AcceptInviteLoader({
   params,
   searchParams,
-}: {
-  params: Promise<{ token: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: PageProps<"/invite/[token]">) {
   const { token } = await params;
   return <AcceptForm token={token} searchParams={searchParams} />;
 }

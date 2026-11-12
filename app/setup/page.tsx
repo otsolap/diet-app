@@ -1,26 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { TextField } from "@/src/components/form/text-field";
 import { bootstrapEmail, countUsers } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
+import { firstQueryValue } from "@/src/lib/query";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Create owner account",
 };
 
-function firstCode(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 async function SetupForm({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: Pick<PageProps<"/setup">, "searchParams">) {
   await connection();
 
   if ((await countUsers()) > 0) {
@@ -28,7 +25,7 @@ async function SetupForm({
   }
 
   const params = await searchParams;
-  const message = errorMessage(firstCode(params.error));
+  const message = errorMessage(firstQueryValue(params.error));
   const ownerEmail = bootstrapEmail();
 
   return (
@@ -39,33 +36,26 @@ async function SetupForm({
       <ErrorText message={message} />
       {ownerEmail ? (
         <form className={styles.form} method="post" action="/api/auth/setup">
-          <label className={styles.field}>
-            Email
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <label className={styles.field}>
-            Password
-            <input
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={12}
-              required
-            />
-          </label>
-          <label className={styles.field}>
-            Confirm password
-            <input
-              name="confirm"
-              type="password"
-              autoComplete="new-password"
-              minLength={12}
-              required
-            />
-          </label>
-          <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-            Create account
-          </button>
+          <TextField className={styles.field} label="Email" name="email" type="email" autoComplete="email" required />
+          <TextField
+            className={styles.field}
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            minLength={12}
+            required
+          />
+          <TextField
+            className={styles.field}
+            label="Confirm password"
+            name="confirm"
+            type="password"
+            autoComplete="new-password"
+            minLength={12}
+            required
+          />
+          <Button className={styles.submit}>Create account</Button>
         </form>
       ) : (
         <p className={styles.error}>
@@ -77,11 +67,7 @@ async function SetupForm({
   );
 }
 
-export default function SetupPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default function SetupPage({ searchParams }: PageProps<"/setup">) {
   return (
     <Suspense fallback={<AuthShell title="Create the owner account">Loading.</AuthShell>}>
       <SetupForm searchParams={searchParams} />

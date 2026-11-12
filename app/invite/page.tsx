@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { headers } from "next/headers";
@@ -5,23 +6,19 @@ import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { ErrorText, AuthShell } from "@/app/auth/shell";
 import styles from "@/app/auth/auth.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { TextField } from "@/src/components/form/text-field";
 import { findOpenInvite, requireUser } from "@/src/lib/auth";
 import { errorMessage } from "@/src/lib/http";
+import { firstQueryValue } from "@/src/lib/query";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Invite",
 };
 
-function firstCode(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 async function InviteForm({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: Pick<PageProps<"/invite">, "searchParams">) {
   await connection();
   const user = await requireUser();
 
@@ -30,8 +27,8 @@ async function InviteForm({
   }
 
   const params = await searchParams;
-  const message = errorMessage(firstCode(params.error));
-  const token = firstCode(params.token);
+  const message = errorMessage(firstQueryValue(params.error));
+  const token = firstQueryValue(params.token);
   const invite = token ? await findOpenInvite(token) : null;
   const headerList = await headers();
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
@@ -55,24 +52,15 @@ async function InviteForm({
         </p>
       ) : null}
       <form className={styles.form} method="post" action="/api/auth/invite">
-        <label className={styles.field}>
-          Email
-          <input name="email" type="email" autoComplete="email" required />
-        </label>
-        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-          Create invite link
-        </button>
+        <TextField className={styles.field} label="Email" name="email" type="email" autoComplete="email" required />
+        <Button className={styles.submit}>Create invite link</Button>
       </form>
       <Link href="/">Back</Link>
     </AuthShell>
   );
 }
 
-export default function InvitePage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default function InvitePage({ searchParams }: PageProps<"/invite">) {
   return (
     <Suspense fallback={<AuthShell title="Invite someone">Loading.</AuthShell>}>
       <InviteForm searchParams={searchParams} />

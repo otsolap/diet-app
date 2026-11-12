@@ -1,20 +1,18 @@
-import { Suspense } from "react";
-import Link from "next/link";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import { FoodList } from "@/src/components/food-list/food-list";
 import { getCurrentUser } from "@/src/lib/auth";
 import { searchFoods } from "@/src/lib/food-search";
 import { listSavedFoodIds } from "@/src/lib/ingredients";
+import { firstQueryValue } from "@/src/lib/query";
 import { portionEntry, searchPortions } from "@/src/lib/portions";
+import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import { FoodPages, pageHref } from "./food-pages";
 import styles from "@/app/foods/foods.module.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Search",
 };
-
-function firstValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function pageNumber(value: string | undefined) {
   if (!value || !/^[1-9]\d{0,5}$/.test(value)) {
@@ -22,15 +20,6 @@ function pageNumber(value: string | undefined) {
   }
 
   return Number(value);
-}
-
-function pageHref(term: string, page: number) {
-  const params = new URLSearchParams({ q: term });
-  if (page > 1) {
-    params.set("page", String(page));
-  }
-
-  return `/ingredients?${params.toString()}`;
 }
 
 async function viewerFoods(term: string) {
@@ -51,52 +40,14 @@ async function viewerFoods(term: string) {
   }
 }
 
-function FoodPages({
-  term,
-  page,
-  pageCount,
-}: {
-  term: string;
-  page: number;
-  pageCount: number;
-}) {
-  if (pageCount <= 1) {
-    return null;
-  }
-
-  return (
-    <nav className={styles.pages} aria-label="Pages">
-      {page > 1 ? (
-        <Link className={styles.pageLink} href={pageHref(term, page - 1)}>
-          Previous
-        </Link>
-      ) : (
-        <span className={styles.pageMuted}>Previous</span>
-      )}
-      <span>
-        Page {page} of {pageCount}
-      </span>
-      {page < pageCount ? (
-        <Link className={styles.pageLink} href={pageHref(term, page + 1)}>
-          Next
-        </Link>
-      ) : (
-        <span className={styles.pageMuted}>Next</span>
-      )}
-    </nav>
-  );
-}
-
 async function FoodSearch({
   searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: Pick<PageProps<"/ingredients">, "searchParams">) {
   await connection();
 
   const params = await searchParams;
-  const term = firstValue(params.q)?.trim() ?? "";
-  const result = term ? await searchFoods(term, pageNumber(firstValue(params.page))) : null;
+  const term = firstQueryValue(params.q)?.trim() ?? "";
+  const result = term ? await searchFoods(term, pageNumber(firstQueryValue(params.page))) : null;
   const error = result && "error" in result ? result.error : null;
   const foods = result && "foods" in result ? result.foods : [];
   const page = result && "page" in result ? result.page : 1;
@@ -105,8 +56,8 @@ async function FoodSearch({
   const rows = [...foods, ...viewer.portions];
 
   return (
-    <main className={styles.page}>
-      <h1 className={styles.title}>Search</h1>
+    <PageMain>
+      <PageTitle>Search</PageTitle>
       <form className={styles.searchForm} method="get" action="/ingredients">
         <label className={styles.searchField}>
           <span className={styles.srOnly}>Search</span>
@@ -125,25 +76,14 @@ async function FoodSearch({
         </>
       ) : null}
       {term && !error && rows.length === 0 ? <p>No foods match that search.</p> : null}
-    </main>
+    </PageMain>
   );
 }
 
-export default function FoodsPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default function FoodsPage({ searchParams }: PageProps<"/ingredients">) {
   return (
-    <Suspense
-      fallback={
-        <main className={styles.page}>
-          <h1 className={styles.title}>Search</h1>
-          <p>Loading.</p>
-        </main>
-      }
-    >
+    <DynamicPage title="Search">
       <FoodSearch searchParams={searchParams} />
-    </Suspense>
+    </DynamicPage>
   );
 }

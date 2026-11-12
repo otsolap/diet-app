@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { FoodListEntry } from "./food-row";
+import type { FoodListEntry } from "@/src/lib/food-list";
 import styles from "./food-list.module.css";
 
 function groupFoods(foods: FoodListEntry[]) {

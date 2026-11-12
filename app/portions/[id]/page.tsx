@@ -1,44 +1,28 @@
-import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import styles from "@/app/foods/foods.module.css";
-import { primaryButtonClass } from "@/src/components/button/button";
+import { Button } from "@/src/components/button/button";
+import { RemoveButton } from "@/src/components/form/remove-button";
+import { TextField } from "@/src/components/form/text-field";
+import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import { MissingNote } from "@/src/components/page/missing-note";
 import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
 import { requireUser } from "@/src/lib/auth";
+import { formatKcal } from "@/src/lib/format";
+import { firstQueryValue } from "@/src/lib/query";
+import { gramsInput } from "@/src/lib/nutrition";
 import { getPortion, portionId } from "@/src/lib/portions";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Portion",
 };
 
-function energyLabel(kcal: number) {
-  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
-}
-
-function gramsInput(grams: number) {
-  return new Intl.NumberFormat("en", { maximumFractionDigits: 2, useGrouping: false }).format(grams);
-}
-
-function firstValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 function PortionMissing() {
-  return (
-    <main className={styles.page}>
-      <h1 className={styles.title}>Portion not found</h1>
-      <p>That portion is not available.</p>
-    </main>
-  );
+  return <MissingNote title="Portion not found" message="That portion is not available." />;
 }
 
-async function PortionView({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+async function PortionView({ params, searchParams }: PageProps<"/portions/[id]">) {
   await connection();
   const user = await requireUser();
   const { id } = await params;
@@ -54,10 +38,10 @@ async function PortionView({
   }
 
   return (
-    <main className={styles.page}>
+    <PageMain>
       <div className={styles.titleRow}>
         <FoodCategoryIcon category={portion.foodUseClass} className={styles.categoryIcon} />
-        <h1 className={styles.title}>{portion.name}</h1>
+        <PageTitle>{portion.name}</PageTitle>
       </div>
       <p className={styles.foodId}>{portion.gramsLabel}</p>
       <p className={styles.source}>
@@ -66,39 +50,41 @@ async function PortionView({
       <form className={styles.form} method="post" action="/api/portions">
         <input type="hidden" name="intent" value="update" />
         <input type="hidden" name="portionId" value={portion.id} />
-        <label className={styles.field}>
-          Name
-          <input name="name" type="text" maxLength={80} required defaultValue={portion.name} />
-        </label>
-        <label className={styles.field}>
-          Grams
-          <input
-            name="grams"
-            type="number"
-            required
-            min={0.1}
-            max={9999}
-            step={0.1}
-            defaultValue={gramsInput(portion.grams)}
-          />
-        </label>
-        <button className={`${primaryButtonClass} ${styles.submit}`} type="submit">
-          Update
-        </button>
+        <TextField
+          className={styles.field}
+          label="Name"
+          name="name"
+          type="text"
+          maxLength={80}
+          required
+          defaultValue={portion.name}
+        />
+        <TextField
+          className={styles.field}
+          label="Grams"
+          name="grams"
+          type="number"
+          required
+          min={0.1}
+          max={9999}
+          step={0.1}
+          defaultValue={gramsInput(portion.grams)}
+        />
+        <Button className={styles.submit}>Update</Button>
       </form>
-      {firstValue(query.error) === "values" ? (
+      {firstQueryValue(query.error) === "values" ? (
         <p className={styles.error}>Enter a name and a weight in grams.</p>
       ) : null}
       <p className={styles.kcal}>
-        {portion.kcal === null ? "No energy value" : energyLabel(portion.kcal)}
+        {formatKcal(portion.kcal)}
       </p>
-      <form method="post" action="/api/portions">
-        <input type="hidden" name="portionId" value={portion.id} />
-        <input type="hidden" name="intent" value="remove" />
-        <button className={styles.remove} type="submit">
-          Remove portion
-        </button>
-      </form>
+      <RemoveButton
+        action="/api/portions"
+        idName="portionId"
+        idValue={portion.id}
+        label="Remove portion"
+        className={styles.remove}
+      />
       {portion.nutrients.length > 0 ? (
         <table className={styles.nutrients}>
           <thead>
@@ -127,27 +113,17 @@ async function PortionView({
           </tbody>
         </table>
       ) : null}
-    </main>
+    </PageMain>
   );
 }
 
 export default function PortionPage({
   params,
   searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: PageProps<"/portions/[id]">) {
   return (
-    <Suspense
-      fallback={
-        <main className={styles.page}>
-          <h1 className={styles.title}>Portion</h1>
-          <p>Loading.</p>
-        </main>
-      }
-    >
+    <DynamicPage title="Portion">
       <PortionView params={params} searchParams={searchParams} />
-    </Suspense>
+    </DynamicPage>
   );
 }

@@ -1,27 +1,8 @@
 import Link from "next/link";
+import type { FoodListEntry } from "@/src/lib/food-list";
 import styles from "./food-list.module.css";
 
-export type FoodListEntry = {
-  id: number;
-  name: string;
-  kcal: number | null;
-  foodUseClass: string | null;
-  foodUseParent: string | null;
-  listKey?: string;
-  href?: string;
-  gramsLabel?: string;
-  idLabel?: string;
-  kind?: "food" | "portion";
-  portionId?: string;
-};
-
-export function energyText(kcal: number | null) {
-  if (kcal === null) {
-    return "No energy value";
-  }
-
-  return `${new Intl.NumberFormat("en").format(kcal)} kcal`;
-}
+export type { FoodListEntry };
 
 export function FoodRow({ food, detail }: { food: FoodListEntry; detail: string }) {
   return (
