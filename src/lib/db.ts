@@ -85,6 +85,19 @@ function ensureSchema() {
       loaded_at timestamptz NOT NULL DEFAULT now()
     );
 
+    CREATE TABLE IF NOT EXISTS fineli_unit (
+      code text PRIMARY KEY,
+      name text NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS fineli_food_unit (
+      food_id integer NOT NULL REFERENCES fineli_food (id) ON DELETE CASCADE,
+      code text NOT NULL REFERENCES fineli_unit (code),
+      grams numeric NOT NULL,
+      PRIMARY KEY (food_id, code),
+      CHECK (grams > 0)
+    );
+
     ALTER TABLE fineli_food
       ADD COLUMN IF NOT EXISTS food_use_class text;
 
@@ -106,6 +119,35 @@ function ensureSchema() {
     );
 
     CREATE INDEX IF NOT EXISTS portion_user_idx ON portion (user_id);
+
+    CREATE TABLE IF NOT EXISTS meal (
+      id uuid PRIMARY KEY,
+      user_id uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+      name text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS meal_user_idx ON meal (user_id);
+
+    CREATE TABLE IF NOT EXISTS meal_item (
+      id uuid PRIMARY KEY,
+      meal_id uuid NOT NULL REFERENCES meal (id) ON DELETE CASCADE,
+      food_id integer REFERENCES fineli_food (id) ON DELETE RESTRICT,
+      portion_id uuid REFERENCES portion (id) ON DELETE RESTRICT,
+      quantity integer NOT NULL DEFAULT 1,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      CHECK (quantity >= 1 AND quantity <= 99),
+      CHECK (
+        (food_id IS NOT NULL AND portion_id IS NULL)
+        OR (food_id IS NULL AND portion_id IS NOT NULL)
+      )
+    );
+
+    CREATE UNIQUE INDEX IF NOT EXISTS meal_item_food_key
+      ON meal_item (meal_id, food_id) WHERE food_id IS NOT NULL;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS meal_item_portion_key
+      ON meal_item (meal_id, portion_id) WHERE portion_id IS NOT NULL;
   `).then(
     () => undefined,
     (error: unknown) => {
