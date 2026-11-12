@@ -1,7 +1,7 @@
 import { query } from "@/src/lib/db";
+import { amountLabel, DETAIL_NUTRIENTS, gramsLabel, kcalFromKj, shareLabel } from "@/src/lib/nutrition";
 
 const SEARCH_LIMIT = 80;
-const KJ_PER_KCAL = 4.184;
 export const FOOD_PAGE_SIZE = 20;
 
 const FOOD_NAME_SQL = `NULLIF(btrim(f.name_en), '')`;
@@ -54,12 +54,6 @@ export type FoodDetail = {
 };
 
 export type FoodDetailResult = { food: FoodDetail } | { missing: true } | { error: string };
-
-const DETAIL_NUTRIENTS = [
-  { code: "FAT", label: "Fat", kcalPerGram: 9 },
-  { code: "PROT", label: "Protein", kcalPerGram: 4 },
-  { code: "CHOAVL", label: "Carbs", kcalPerGram: 4 },
-] as const;
 
 type ReadyRow = {
   ready: boolean;
@@ -119,39 +113,8 @@ const UNIT_ORDER = [
   "KG",
 ];
 
-function amountLabel(value: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
-  return `${text} g`;
-}
-
-function unitGramsLabel(value: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(value);
-  return `${text} g`;
-}
-
 function unitLabel(name: string, grams: number) {
-  return `1 ${name} (${unitGramsLabel(grams)})`;
-}
-
-function shareLabel(value: number, kcalPerGram: number, kcal: number | null) {
-  if (kcal === null || kcal <= 0) {
-    return null;
-  }
-
-  return `${Math.round((value * kcalPerGram * 100) / kcal)}%`;
-}
-
-function kcalFromKj(value: string | null) {
-  if (value === null) {
-    return null;
-  }
-
-  const kj = Number(value);
-  if (!Number.isFinite(kj)) {
-    return null;
-  }
-
-  return Math.round(kj / KJ_PER_KCAL);
+  return `1 ${name} (${gramsLabel(grams)})`;
 }
 
 function requestedPage(page: number) {

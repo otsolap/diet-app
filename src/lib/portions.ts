@@ -1,16 +1,9 @@
 import { randomUUID } from "node:crypto";
-import type { FoodListEntry } from "@/src/components/food-list/food-row";
 import { query } from "@/src/lib/db";
+import type { FoodListEntry } from "@/src/lib/food-list";
 import type { FoodNutrient } from "@/src/lib/food-search";
-
-const KJ_PER_KCAL = 4.184;
-const PORTION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-const DETAIL_NUTRIENTS = [
-  { code: "FAT", label: "Fat", kcalPerGram: 9 },
-  { code: "PROT", label: "Protein", kcalPerGram: 4 },
-  { code: "CHOAVL", label: "Carbs", kcalPerGram: 4 },
-] as const;
+import { parseUuid } from "@/src/lib/id";
+import { amountLabel, DETAIL_NUTRIENTS, gramsLabel, kcalFromKj, shareLabel } from "@/src/lib/nutrition";
 
 export type PortionHit = {
   id: string;
@@ -39,19 +32,6 @@ type PortionRow = {
   food_use_parent: string | null;
 };
 
-function kcalFromKj(value: string | null) {
-  if (value === null) {
-    return null;
-  }
-
-  const kj = Number(value);
-  if (!Number.isFinite(kj)) {
-    return null;
-  }
-
-  return Math.round(kj / KJ_PER_KCAL);
-}
-
 function scaleKcal(per100: number | null, grams: number) {
   if (per100 === null) {
     return null;
@@ -60,30 +40,8 @@ function scaleKcal(per100: number | null, grams: number) {
   return Math.round((per100 * grams) / 100);
 }
 
-function amountLabel(value: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
-  return `${text} g`;
-}
-
-function shareLabel(value: number, kcalPerGram: number, kcal: number | null) {
-  if (kcal === null || kcal <= 0) {
-    return null;
-  }
-
-  return `${Math.round((value * kcalPerGram * 100) / kcal)}%`;
-}
-
-export function gramsLabel(grams: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(grams);
-  return `${text} g`;
-}
-
 export function portionId(value: string) {
-  if (!PORTION_ID.test(value)) {
-    return null;
-  }
-
-  return value.toLowerCase();
+  return parseUuid(value);
 }
 
 export function portionName(value: string) {

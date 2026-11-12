@@ -1,6 +1,5 @@
 import { query } from "@/src/lib/db";
-
-const KJ_PER_KCAL = 4.184;
+import { kcalFromKj } from "@/src/lib/nutrition";
 
 export type SavedIngredient = {
   id: number;
@@ -9,19 +8,6 @@ export type SavedIngredient = {
   foodUseClass: string | null;
   foodUseParent: string | null;
 };
-
-function kcalFromKj(value: string | null) {
-  if (value === null) {
-    return null;
-  }
-
-  const kj = Number(value);
-  if (!Number.isFinite(kj)) {
-    return null;
-  }
-
-  return Math.round(kj / KJ_PER_KCAL);
-}
 
 export async function listSavedIngredients(userId: string) {
   const result = await query<{

@@ -1,10 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { query, withTransaction } from "@/src/lib/db";
-import { gramsLabel } from "@/src/lib/portions";
-
-const KJ_PER_KCAL = 4.184;
-const MEAL_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const NUTRIENT_CODES = ["FAT", "PROT", "CHOAVL"] as const;
+import { parseUuid } from "@/src/lib/id";
+import { gramsLabel, kcalFromKj, NUTRIENT_CODES } from "@/src/lib/nutrition";
 
 export type MealChoice = {
   value: string;
@@ -51,19 +48,6 @@ type NutrientRow = {
   value: string | null;
 };
 
-function kcalFromKj(value: string | null) {
-  if (value === null) {
-    return null;
-  }
-
-  const kj = Number(value);
-  if (!Number.isFinite(kj)) {
-    return null;
-  }
-
-  return Math.round(kj / KJ_PER_KCAL);
-}
-
 function finite(value: string | null) {
   if (value === null) {
     return null;
@@ -98,11 +82,7 @@ function lineTotal(unit: number | null, quantity: number) {
 }
 
 export function mealId(value: string) {
-  if (!MEAL_ID.test(value)) {
-    return null;
-  }
-
-  return value.toLowerCase();
+  return parseUuid(value);
 }
 
 export function mealName(value: string) {
