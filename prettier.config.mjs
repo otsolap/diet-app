@@ -1,0 +1,17 @@
+/** @type {import("prettier").Config} */
+const prettierConfig = {
+  semi: true,
+  singleQuote: false,
+  trailingComma: "all",
+  printWidth: 80,
+  overrides: [
+    {
+      files: "*.css",
+      options: {
+        useTabs: true,
+      },
+    },
+  ],
+};
+
+export default prettierConfig;

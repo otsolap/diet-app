@@ -2,10 +2,10 @@
 
 This project uses custom CSS. Follow these standards:
 
-- **Use rem units** instead of px (e.g., `.75rem` not `12px`)
+- **Use rem units** instead of px (e.g., `0.75rem` not `12px`)
 - **Use CSS custom properties** (e.g., `var(--spacing-single)`) instead of hardcoded values for padding, margin, and gap
 - **Never use `--spacing-*` variables for width/height** - use rem or px values instead
-- **No leading zeros** in decimal values (e.g., `.9375rem` not `0.9375rem`)
+- **Use a leading zero** in decimal values (e.g., `0.9375rem` not `.9375rem`)
 - **No fallback values** in CSS variables unless absolutely necessary
 - **Use `background-color`** instead of the `background` shorthand
 - **Use `border: 0`** instead of `border: none`
