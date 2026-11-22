@@ -13,7 +13,10 @@ export function FoodCategoryIcon({
   return (
     <span className={className} aria-hidden="true">
       <svg viewBox="0 0 24 24">
-        <path fill="currentColor" d={saved ? mdiNote : foodCategoryIcon(category)} />
+        <path
+          fill="currentColor"
+          d={saved ? mdiNote : foodCategoryIcon(category)}
+        />
       </svg>
     </span>
   );

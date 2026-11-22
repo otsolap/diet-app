@@ -76,13 +76,22 @@ export function MacroChart({ nutrients }: { nutrients: FoodNutrient[] }) {
 
   return (
     <figure className={styles.chart}>
-      <div className={styles.pie} style={{ backgroundImage: image }} aria-hidden="true" />
+      <div
+        className={styles.pie}
+        style={{ backgroundImage: image }}
+        aria-hidden="true"
+      />
       <ul className={styles.legend}>
         {parts.map((part) => (
           <li key={part.label} className={styles.legendItem}>
-            <span className={`${styles.swatch} ${swatchClass(part.label)}`} aria-hidden="true" />
+            <span
+              className={`${styles.swatch} ${swatchClass(part.label)}`}
+              aria-hidden="true"
+            />
             <span className={styles.legendLabel}>{part.label}</span>
-            <span className={styles.legendAmount}>{amounts.get(part.label)}</span>
+            <span className={styles.legendAmount}>
+              {amounts.get(part.label)}
+            </span>
             <span className={styles.legendShare}>{part.share}</span>
           </li>
         ))}

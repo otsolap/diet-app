@@ -32,7 +32,9 @@ export function FoodGroups({
       {groupFoods(foods).map((group) => (
         <section key={group.parent} className={styles.group}>
           <h2 className={styles.groupTitle}>{group.parent}</h2>
-          <ul className={styles.list}>{group.foods.map((food) => children(food))}</ul>
+          <ul className={styles.list}>
+            {group.foods.map((food) => children(food))}
+          </ul>
         </section>
       ))}
     </div>

@@ -39,7 +39,14 @@ async function LoginForm({
     <AuthShell title="Sign in">
       <ErrorText message={message} />
       <form className={styles.form} method="post" action="/api/auth/login">
-        <TextField className={styles.field} label="Email" name="email" type="email" autoComplete="email" required />
+        <TextField
+          className={styles.field}
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+        />
         <TextField
           className={styles.field}
           label="Password"

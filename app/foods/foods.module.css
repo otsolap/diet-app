@@ -74,8 +74,8 @@
 
 .srOnly {
 	position: absolute;
-	width: .0625rem;
-	height: .0625rem;
+	width: 0.0625rem;
+	height: 0.0625rem;
 	padding: 0;
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
@@ -131,8 +131,8 @@
 .field select {
 	height: 2.75rem;
 	padding: 0 var(--spacing-three-quarters);
-	border: .0625rem solid var(--color-primary-light);
-	border-radius: .5rem;
+	border: 0.0625rem solid var(--color-primary-light);
+	border-radius: 0.5rem;
 	background-color: var(--color-primary-semidark);
 	color: var(--color-white);
 }
@@ -247,8 +247,8 @@
 	display: flex;
 	align-items: center;
 	gap: var(--spacing-half);
-	padding: .65rem 0;
-	border-bottom: .0625rem solid var(--color-primary);
+	padding: 0.65rem 0;
+	border-bottom: 0.0625rem solid var(--color-primary);
 }
 
 .legendItem:last-child {
@@ -267,8 +267,8 @@
 }
 
 .swatch {
-	width: .75rem;
-	height: .75rem;
+	width: 0.75rem;
+	height: 0.75rem;
 	border-radius: 50%;
 }
 
@@ -346,7 +346,7 @@
 
 .save:disabled {
 	cursor: not-allowed;
-	opacity: .55;
+	opacity: 0.55;
 }
 
 .hint {
@@ -367,7 +367,7 @@
 .amount,
 .share {
 	padding: var(--spacing-half) 0;
-	border-bottom: .0625rem solid var(--color-primary);
+	border-bottom: 0.0625rem solid var(--color-primary);
 	font-weight: 400;
 	text-align: left;
 	vertical-align: baseline;
@@ -389,7 +389,7 @@
 .headingValue {
 	padding-top: var(--spacing-half);
 	padding-bottom: var(--spacing-half);
-	border-bottom: .0625rem solid var(--color-primary);
+	border-bottom: 0.0625rem solid var(--color-primary);
 	color: var(--color-tertiary-light);
 	font-weight: 400;
 }
@@ -408,8 +408,8 @@
 	max-width: 24rem;
 	margin: auto;
 	padding: var(--spacing-double);
-	border: .0625rem solid var(--color-primary);
-	border-radius: .5rem;
+	border: 0.0625rem solid var(--color-primary);
+	border-radius: 0.5rem;
 	background-color: var(--color-primary-semidark);
 	color: var(--color-white);
 }

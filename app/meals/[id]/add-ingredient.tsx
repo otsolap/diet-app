@@ -13,7 +13,13 @@ function choiceGroups(choices: MealChoice[]) {
   ].filter((group) => group.items.length > 0);
 }
 
-export function AddIngredient({ mealIdValue, choices }: { mealIdValue: string; choices: MealChoice[] }) {
+export function AddIngredient({
+  mealIdValue,
+  choices,
+}: {
+  mealIdValue: string;
+  choices: MealChoice[];
+}) {
   const groups = choiceGroups(choices);
   if (groups.length === 0) {
     return (
@@ -24,7 +30,11 @@ export function AddIngredient({ mealIdValue, choices }: { mealIdValue: string; c
   }
 
   return (
-    <form className={`${styles.addForm} ${foodStyles.controls}`} method="post" action="/api/meals">
+    <form
+      className={`${styles.addForm} ${foodStyles.controls}`}
+      method="post"
+      action="/api/meals"
+    >
       <input type="hidden" name="intent" value="add" />
       <input type="hidden" name="mealId" value={mealIdValue} />
       <label className={foodStyles.field}>

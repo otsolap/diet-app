@@ -5,7 +5,13 @@ import { SocialLinks } from "@/src/components/social-links/social-links";
 import { site, type SiteLink } from "@/src/lib/site";
 import styles from "./footer.module.css";
 
-function FooterAnchor({ link, className }: { link: SiteLink; className: string }) {
+function FooterAnchor({
+  link,
+  className,
+}: {
+  link: SiteLink;
+  className: string;
+}) {
   if (link.isExternal) {
     return (
       <a
@@ -61,7 +67,13 @@ export function Footer() {
       <div className={styles.columns}>
         <div className={styles.column}>
           <div className={styles.logo}>
-            <img className={styles.logoMark} src="/logo.png" alt="" width={192} height={192} />
+            <img
+              className={styles.logoMark}
+              src="/logo.png"
+              alt=""
+              width={192}
+              height={192}
+            />
             <span className={styles.logoTitle}>{brand.title}</span>
           </div>
           <p className={styles.text}>{brand.description}</p>

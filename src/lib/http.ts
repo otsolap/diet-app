@@ -32,7 +32,8 @@ export function unauthorized() {
 
 export function isSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const host =
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host");
   if (!origin || !host) {
     return false;
   }
@@ -61,14 +62,20 @@ type FormField = (name: string) => string;
 
 export async function requireFormUser(
   request: Request,
-): Promise<{ ok: true; user: CurrentUser; field: FormField } | { ok: false; response: NextResponse }> {
+): Promise<
+  | { ok: true; user: CurrentUser; field: FormField }
+  | { ok: false; response: NextResponse }
+> {
   if (!isSameOrigin(request)) {
     return { ok: false, response: redirectTo(request, "/login?error=origin") };
   }
 
   const user = await getCurrentUser();
   if (!user) {
-    return { ok: false, response: redirectTo(request, "/login?error=signedout") };
+    return {
+      ok: false,
+      response: redirectTo(request, "/login?error=signedout"),
+    };
   }
 
   return { ok: true, user, field: await readForm(request) };

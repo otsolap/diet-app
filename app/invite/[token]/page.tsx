@@ -70,7 +70,9 @@ export default function AcceptInvitePage({
   searchParams,
 }: PageProps<"/invite/[token]">) {
   return (
-    <Suspense fallback={<AuthShell title="Create your account">Loading.</AuthShell>}>
+    <Suspense
+      fallback={<AuthShell title="Create your account">Loading.</AuthShell>}
+    >
       <AcceptInviteLoader params={params} searchParams={searchParams} />
     </Suspense>
   );

@@ -72,7 +72,13 @@ export async function POST(request: Request) {
   if (intent === "quantity") {
     const itemId = mealId(field("itemId"));
     if (itemId) {
-      await changeMealQuantity(user.id, id, itemId, field("direction"), field("quantity"));
+      await changeMealQuantity(
+        user.id,
+        id,
+        itemId,
+        field("direction"),
+        field("quantity"),
+      );
     }
 
     return redirectTo(request, back);

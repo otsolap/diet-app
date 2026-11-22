@@ -33,9 +33,13 @@ export async function POST(request: Request) {
 
   const result = await createInvite(email, user);
   if ("error" in result) {
-    const path = result.error === "owner" ? "/?error=owner" : "/invite?error=taken";
+    const path =
+      result.error === "owner" ? "/?error=owner" : "/invite?error=taken";
     return redirectTo(request, path);
   }
 
-  return redirectTo(request, `/invite?token=${encodeURIComponent(result.token)}`);
+  return redirectTo(
+    request,
+    `/invite?token=${encodeURIComponent(result.token)}`,
+  );
 }

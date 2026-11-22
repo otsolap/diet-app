@@ -14,6 +14,7 @@ This project uses custom CSS. Follow these standards:
 - **Prefer flexbox over CSS grid** for layouts - use `display: flex` with `flex-wrap: wrap` for multi-column layouts instead of `display: grid`
 
 **Brand colors (CSS custom properties in `src/styles/partials/variables.css`):**
+
 - Primary: `--color-primary`, `--color-primary-dark`, `--color-primary-semidark`, `--color-primary-light`
 - Secondary: `--color-secondary`, `--color-secondary-dark`, `--color-secondary-semidark`, `--color-secondary-light`
 - Tertiary: `--color-tertiary`, `--color-tertiary-dark`, `--color-tertiary-light`
@@ -29,20 +30,25 @@ className={`${styles.item} ${current ? styles.itemCurrent : ""}`}
 ```
 
 ```css
-.item {}
-.itemCurrent {}
+.item {
+}
+.itemCurrent {
+}
 ```
 
 Global CSS in `src/styles` uses BEM. Write those class names as strings.
 
 ```tsx
-className="button button--primary"
+className = "button button--primary";
 ```
 
 ```css
-.button {}
-.button--primary {}
-.button__icon {}
+.button {
+}
+.button--primary {
+}
+.button__icon {
+}
 ```
 
 ## Media Query Organization
@@ -54,35 +60,36 @@ Screen widths live in `src/styles/partials/screens.css`.
 ```css
 /* Mobile-first base styles */
 .list {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-single);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-single);
 }
 
 .title {
-	font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 /* Tablet styles */
 @media (width >= 768px) {
-	.list {
-		flex-direction: row;
-	}
+  .list {
+    flex-direction: row;
+  }
 
-	.title {
-		font-size: 1.5rem;
-	}
+  .title {
+    font-size: 1.5rem;
+  }
 }
 
 /* Laptop styles */
 @media (width >= 1024px) {
-	.title {
-		font-size: 2rem;
-	}
+  .title {
+    font-size: 2rem;
+  }
 }
 ```
 
 **Key principles:**
+
 - Write mobile-first base styles at the top
 - Use only these widths, in this order: xs `520px`, sm `640px`, md `768px`, lg `1024px`, xl `1280px`
 - Group each width in one `@media` block at the end of the file

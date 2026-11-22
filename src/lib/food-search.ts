@@ -1,5 +1,11 @@
 import { query } from "@/src/lib/db";
-import { amountLabel, DETAIL_NUTRIENTS, gramsLabel, kcalFromKj, shareLabel } from "@/src/lib/nutrition";
+import {
+  amountLabel,
+  DETAIL_NUTRIENTS,
+  gramsLabel,
+  kcalFromKj,
+  shareLabel,
+} from "@/src/lib/nutrition";
 
 const SEARCH_LIMIT = 80;
 export const FOOD_PAGE_SIZE = 20;
@@ -53,7 +59,8 @@ export type FoodDetail = {
   units: FoodUnitChoice[];
 };
 
-export type FoodDetailResult = { food: FoodDetail } | { missing: true } | { error: string };
+export type FoodDetailResult =
+  { food: FoodDetail } | { missing: true } | { error: string };
 
 type ReadyRow = {
   ready: boolean;
@@ -125,7 +132,10 @@ function requestedPage(page: number) {
   return page;
 }
 
-export async function searchFoods(term: string, page = 1): Promise<FoodSearchResult> {
+export async function searchFoods(
+  term: string,
+  page = 1,
+): Promise<FoodSearchResult> {
   const trimmed = term.trim();
   if (!trimmed) {
     return { error: "Enter a search term." };
@@ -155,7 +165,8 @@ export async function searchFoods(term: string, page = 1): Promise<FoodSearchRes
     }
 
     const pageCount = total === 0 ? 0 : Math.ceil(total / FOOD_PAGE_SIZE);
-    const current = pageCount === 0 ? 1 : Math.min(requestedPage(page), pageCount);
+    const current =
+      pageCount === 0 ? 1 : Math.min(requestedPage(page), pageCount);
     if (total === 0) {
       return { foods: [], total, page: current, pageCount };
     }
@@ -193,13 +204,15 @@ export async function searchFoods(term: string, page = 1): Promise<FoodSearchRes
           return [];
         }
 
-        return [{
-          id: row.id,
-          name: row.name,
-          kcal: kcalFromKj(row.energy_kj),
-          foodUseClass: row.food_use_class,
-          foodUseParent: row.food_use_parent,
-        }];
+        return [
+          {
+            id: row.id,
+            name: row.name,
+            kcal: kcalFromKj(row.energy_kj),
+            foodUseClass: row.food_use_class,
+            foodUseParent: row.food_use_parent,
+          },
+        ];
       }),
       total,
       page: current,
@@ -264,7 +277,9 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
         [id],
       ),
     ]);
-    const byCode = new Map(values.rows.map((item) => [item.component, item.value]));
+    const byCode = new Map(
+      values.rows.map((item) => [item.component, item.value]),
+    );
     const kcal = kcalFromKj(row.energy_kj);
     const nutrients = DETAIL_NUTRIENTS.flatMap((item) => {
       const value = grams(byCode.get(item.code) ?? null);
@@ -300,12 +315,17 @@ export async function getFood(id: number): Promise<FoodDetailResult> {
         return [];
       }
 
-      return [{ code: unit.code, label: unitLabel(unit.name, weight), grams: weight }];
+      return [
+        { code: unit.code, label: unitLabel(unit.name, weight), grams: weight },
+      ];
     });
     units.sort((a, b) => {
       const aIndex = UNIT_ORDER.indexOf(a.code);
       const bIndex = UNIT_ORDER.indexOf(b.code);
-      return (aIndex === -1 ? UNIT_ORDER.length : aIndex) - (bIndex === -1 ? UNIT_ORDER.length : bIndex);
+      return (
+        (aIndex === -1 ? UNIT_ORDER.length : aIndex) -
+        (bIndex === -1 ? UNIT_ORDER.length : bIndex)
+      );
     });
 
     return {

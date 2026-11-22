@@ -5,7 +5,11 @@ import foodStyles from "@/app/foods/foods.module.css";
 import { Button } from "@/src/components/button/button";
 import { TextField } from "@/src/components/form/text-field";
 import { BackLink } from "@/src/components/page/back-link";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { MissingNote } from "@/src/components/page/missing-note";
 import { requireUser } from "@/src/lib/auth";
 import { formatKcal } from "@/src/lib/format";
@@ -19,7 +23,9 @@ export const metadata: Metadata = {
 };
 
 function MealMissing() {
-  return <MissingNote title="Meal not found" message="That meal is not available." />;
+  return (
+    <MissingNote title="Meal not found" message="That meal is not available." />
+  );
 }
 
 async function MealView({ params }: Pick<PageProps<"/meals/[id]">, "params">) {
@@ -75,7 +81,11 @@ async function MealView({ params }: Pick<PageProps<"/meals/[id]">, "params">) {
         </div>
       ) : null}
       <AddIngredient mealIdValue={meal.id} choices={choices} />
-      <form className={`${foodStyles.form} ${styles.renameForm}`} method="post" action="/api/meals">
+      <form
+        className={`${foodStyles.form} ${styles.renameForm}`}
+        method="post"
+        action="/api/meals"
+      >
         <input type="hidden" name="intent" value="rename" />
         <input type="hidden" name="mealId" value={meal.id} />
         <TextField

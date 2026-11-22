@@ -4,7 +4,11 @@ import { connection } from "next/server";
 import foodStyles from "@/app/foods/foods.module.css";
 import { Button } from "@/src/components/button/button";
 import { TextField } from "@/src/components/form/text-field";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { requireUser } from "@/src/lib/auth";
 import { formatKcal } from "@/src/lib/format";
 import { listMeals, type MealSummary } from "@/src/lib/meals";

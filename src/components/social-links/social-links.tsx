@@ -30,7 +30,10 @@ export function SocialLinks() {
             rel="noreferrer"
           >
             <span className={styles.iconWrap}>
-              <span className={`${styles.icon} ${link.icon}`} aria-hidden="true" />
+              <span
+                className={`${styles.icon} ${link.icon}`}
+                aria-hidden="true"
+              />
             </span>
             {link.label}
           </a>

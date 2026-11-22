@@ -36,7 +36,10 @@ export function isValidEmail(value: string) {
 }
 
 export function passwordProblem(password: string) {
-  if (password.length < MIN_PASSWORD_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+  if (
+    password.length < MIN_PASSWORD_LENGTH ||
+    password.length > MAX_PASSWORD_LENGTH
+  ) {
     return "weak";
   }
 
@@ -62,7 +65,9 @@ function requireSecret() {
 }
 
 function hashToken(token: string) {
-  return createHmac("sha256", requireSecret()).update(token).digest("base64url");
+  return createHmac("sha256", requireSecret())
+    .update(token)
+    .digest("base64url");
 }
 
 function isUniqueViolation(error: unknown) {
@@ -116,7 +121,9 @@ async function createSession(userId: string) {
 }
 
 export async function countUsers() {
-  const result = await query<{ count: string }>("SELECT count(*)::text AS count FROM users");
+  const result = await query<{ count: string }>(
+    "SELECT count(*)::text AS count FROM users",
+  );
   return Number(result.rows[0]?.count ?? 0);
 }
 
@@ -240,7 +247,10 @@ export async function createInvite(email: string, user: CurrentUser) {
     return { error: "owner" as const };
   }
 
-  const existing = await query<{ id: string }>("SELECT id FROM users WHERE email = $1", [email]);
+  const existing = await query<{ id: string }>(
+    "SELECT id FROM users WHERE email = $1",
+    [email],
+  );
   if (existing.rows[0]) {
     return { error: "taken" as const };
   }

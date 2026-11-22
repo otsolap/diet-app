@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
-async function FoodRedirect({ params }: Pick<PageProps<"/foods/[id]">, "params">) {
+async function FoodRedirect({
+  params,
+}: Pick<PageProps<"/foods/[id]">, "params">) {
   const { id } = await params;
   redirect(`/ingredients/${id}`);
   return null;

@@ -31,7 +31,8 @@ export function FoodList({
   return (
     <FoodGroups foods={foods}>
       {(food) => {
-        const saved = food.kind !== "portion" && (savedIds?.has(food.id) ?? false);
+        const saved =
+          food.kind !== "portion" && (savedIds?.has(food.id) ?? false);
 
         return (
           <li className={styles.entry} key={food.listKey ?? `food:${food.id}`}>
@@ -41,7 +42,9 @@ export function FoodList({
             ) : (
               <form method="post" action="/api/ingredients">
                 <input type="hidden" name="foodId" value={food.id} />
-                {returnTo ? <input type="hidden" name="next" value={returnTo} /> : null}
+                {returnTo ? (
+                  <input type="hidden" name="next" value={returnTo} />
+                ) : null}
                 <button className={styles.save} type="submit">
                   Save
                 </button>

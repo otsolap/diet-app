@@ -34,7 +34,8 @@ function readTable(dir: string, file: string) {
 
 function expectHeader(header: string[], expected: string[], file: string) {
   const same =
-    header.length === expected.length && header.every((column, index) => column === expected[index]);
+    header.length === expected.length &&
+    header.every((column, index) => column === expected[index]);
   if (!same) {
     throw new Error(`${file} is not a Fineli basic package 1 file.`);
   }
@@ -75,7 +76,13 @@ function addNames(
       throw new Error("A Fineli food name has the wrong language.");
     }
 
-    const item = names.get(id) ?? { id, en: "", fi: "", sv: "", foodUseClass: "" };
+    const item = names.get(id) ?? {
+      id,
+      en: "",
+      fi: "",
+      sv: "",
+      foodUseClass: "",
+    };
     item[key] = row[1]?.trim() ?? "";
     names.set(id, item);
   }
@@ -93,9 +100,21 @@ async function main() {
     const finnish = readTable(dir, "foodname_FI.csv");
     const swedish = readTable(dir, "foodname_SV.csv");
     const values = readTable(dir, "component_value.csv");
-    expectHeader(english.header, ["FOODID", "FOODNAME", "LANG"], "foodname_EN.csv");
-    expectHeader(finnish.header, ["FOODID", "FOODNAME", "LANG"], "foodname_FI.csv");
-    expectHeader(swedish.header, ["FOODID", "FOODNAME", "LANG"], "foodname_SV.csv");
+    expectHeader(
+      english.header,
+      ["FOODID", "FOODNAME", "LANG"],
+      "foodname_EN.csv",
+    );
+    expectHeader(
+      finnish.header,
+      ["FOODID", "FOODNAME", "LANG"],
+      "foodname_FI.csv",
+    );
+    expectHeader(
+      swedish.header,
+      ["FOODID", "FOODNAME", "LANG"],
+      "foodname_SV.csv",
+    );
     expectHeader(
       values.header,
       ["FOODID", "EUFDNAME", "BESTLOC", "ACQTYPE", "METHTYPE", "METHIND"],
@@ -111,14 +130,36 @@ async function main() {
     const foodRows = readTable(dir, "food.csv");
     const unitNames = readTable(dir, "foodunit_EN.csv");
     const foodUnits = readTable(dir, "foodaddunit.csv");
-    expectHeader(classes.header, ["THSCODE", "DESCRIPT", "LANG"], "fuclass_EN.csv");
+    expectHeader(
+      classes.header,
+      ["THSCODE", "DESCRIPT", "LANG"],
+      "fuclass_EN.csv",
+    );
     expectHeader(
       foodRows.header,
-      ["FOODID", "FOODNAME", "FOODTYPE", "PROCESS", "EDPORT", "IGCLASS", "IGCLASSP", "FUCLASS", "FUCLASSP"],
+      [
+        "FOODID",
+        "FOODNAME",
+        "FOODTYPE",
+        "PROCESS",
+        "EDPORT",
+        "IGCLASS",
+        "IGCLASSP",
+        "FUCLASS",
+        "FUCLASSP",
+      ],
       "food.csv",
     );
-    expectHeader(unitNames.header, ["THSCODE", "DESCRIPT", "LANG"], "foodunit_EN.csv");
-    expectHeader(foodUnits.header, ["FOODID", "FOODUNIT", "MASS"], "foodaddunit.csv");
+    expectHeader(
+      unitNames.header,
+      ["THSCODE", "DESCRIPT", "LANG"],
+      "foodunit_EN.csv",
+    );
+    expectHeader(
+      foodUnits.header,
+      ["FOODID", "FOODUNIT", "MASS"],
+      "foodaddunit.csv",
+    );
 
     const classNames = new Map<string, string>();
     for (const row of classes.rows) {
@@ -174,12 +215,21 @@ async function main() {
       unitNameByCode.set(code, name);
     }
 
-    const portionByKey = new Map<string, { id: number; code: string; grams: string }>();
+    const portionByKey = new Map<
+      string,
+      { id: number; code: string; grams: string }
+    >();
     for (const row of foodUnits.rows) {
       const id = foodId(row[0]);
       const code = row[1]?.trim() ?? "";
       const grams = componentValue(row[2]);
-      if (!names.has(id) || !code || !unitNameByCode.has(code) || !grams || Number(grams) <= 0) {
+      if (
+        !names.has(id) ||
+        !code ||
+        !unitNameByCode.has(code) ||
+        !grams ||
+        Number(grams) <= 0
+      ) {
         continue;
       }
       portionByKey.set(`${id}:${code}`, { id, code, grams });
@@ -268,7 +318,10 @@ async function main() {
       await sql(
         `INSERT INTO fineli_unit (code, name)
          SELECT * FROM UNNEST($1::text[], $2::text[])`,
-        [usedUnitCodes, usedUnitCodes.map((code) => unitNameByCode.get(code) ?? code)],
+        [
+          usedUnitCodes,
+          usedUnitCodes.map((code) => unitNameByCode.get(code) ?? code),
+        ],
       );
       await sql(
         `INSERT INTO fineli_food_unit (food_id, code, grams)

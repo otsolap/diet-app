@@ -21,7 +21,11 @@ export function kcalFromKj(value: string | null) {
   return Math.round(kj / KJ_PER_KCAL);
 }
 
-export function shareLabel(value: number, kcalPerGram: number, kcal: number | null) {
+export function shareLabel(
+  value: number,
+  kcalPerGram: number,
+  kcal: number | null,
+) {
   if (kcal === null || kcal <= 0) {
     return null;
   }
@@ -30,15 +34,22 @@ export function shareLabel(value: number, kcalPerGram: number, kcal: number | nu
 }
 
 export function amountLabel(value: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(value);
+  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 1 }).format(
+    value,
+  );
   return `${text} g`;
 }
 
 export function gramsLabel(grams: number) {
-  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(grams);
+  const text = new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(
+    grams,
+  );
   return `${text} g`;
 }
 
 export function gramsInput(grams: number) {
-  return new Intl.NumberFormat("en", { maximumFractionDigits: 2, useGrouping: false }).format(grams);
+  return new Intl.NumberFormat("en", {
+    maximumFractionDigits: 2,
+    useGrouping: false,
+  }).format(grams);
 }

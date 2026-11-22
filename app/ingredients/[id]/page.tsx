@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { BackLink } from "@/src/components/page/back-link";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { MissingNote } from "@/src/components/page/missing-note";
 import { MacroChart } from "./macro-chart";
 import { PortionSize } from "./portion-size";
@@ -40,12 +44,14 @@ function FoodView({
       <BackLink href="/ingredients" label="Search" />
       <div className={styles.hero}>
         <PageTitle>{food.name}</PageTitle>
-        <p className={styles.heroEnergy}>
-          {formatKcal(food.kcal)}
-        </p>
-        {food.kcal === null ? null : <p className={styles.perNote}>per 100 g</p>}
+        <p className={styles.heroEnergy}>{formatKcal(food.kcal)}</p>
+        {food.kcal === null ? null : (
+          <p className={styles.perNote}>per 100 g</p>
+        )}
       </div>
-      {food.nutrients.length > 0 ? <MacroChart nutrients={food.nutrients} /> : null}
+      {food.nutrients.length > 0 ? (
+        <MacroChart nutrients={food.nutrients} />
+      ) : null}
       <PortionSize
         foodId={food.id}
         signedIn={signedIn}
@@ -58,7 +64,9 @@ function FoodView({
   );
 }
 
-async function FoodDetail({ params }: Pick<PageProps<"/ingredients/[id]">, "params">) {
+async function FoodDetail({
+  params,
+}: Pick<PageProps<"/ingredients/[id]">, "params">) {
   await connection();
   const { id } = await params;
   const parsed = foodId(id);

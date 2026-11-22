@@ -188,7 +188,15 @@ export async function listMealChoices(userId: string) {
 }
 
 async function nutrientMap(foodIds: number[]) {
-  const map = new Map<number, { fat: number | null; protein: number | null; carbs: number | null; kcal: number | null }>();
+  const map = new Map<
+    number,
+    {
+      fat: number | null;
+      protein: number | null;
+      carbs: number | null;
+      kcal: number | null;
+    }
+  >();
   if (foodIds.length === 0) {
     return map;
   }
@@ -243,7 +251,13 @@ type RawItem = {
 };
 
 async function linesFor(items: RawItem[]) {
-  const foodIds = [...new Set(items.flatMap((item) => (item.source_food_id === null ? [] : [item.source_food_id])))];
+  const foodIds = [
+    ...new Set(
+      items.flatMap((item) =>
+        item.source_food_id === null ? [] : [item.source_food_id],
+      ),
+    ),
+  ];
   const nutrients = await nutrientMap(foodIds);
 
   return items.flatMap((item) => {
@@ -258,19 +272,30 @@ async function linesFor(items: RawItem[]) {
 
     const source = nutrients.get(item.source_food_id);
     const grams = item.portion_id ? finite(item.grams) : null;
-    const unitKcal = source ? scale(source.kcal, item.portion_id ? grams : null) : null;
+    const unitKcal = source
+      ? scale(source.kcal, item.portion_id ? grams : null)
+      : null;
     const roundedKcal = unitKcal === null ? null : Math.round(unitKcal);
-    const unitFat = source ? scale(source.fat, item.portion_id ? grams : null) : null;
-    const unitProtein = source ? scale(source.protein, item.portion_id ? grams : null) : null;
-    const unitCarbs = source ? scale(source.carbs, item.portion_id ? grams : null) : null;
+    const unitFat = source
+      ? scale(source.fat, item.portion_id ? grams : null)
+      : null;
+    const unitProtein = source
+      ? scale(source.protein, item.portion_id ? grams : null)
+      : null;
+    const unitCarbs = source
+      ? scale(source.carbs, item.portion_id ? grams : null)
+      : null;
     const scaledKcal = lineTotal(roundedKcal, quantity);
 
     const line: MealLine = {
       id: item.id,
       name: item.name,
-      href: item.portion_id ? `/portions/${item.portion_id}` : `/ingredients/${item.food_id}`,
+      href: item.portion_id
+        ? `/portions/${item.portion_id}`
+        : `/ingredients/${item.food_id}`,
       quantity,
-      baseLabel: item.portion_id && grams !== null ? gramsLabel(grams) : "100 g",
+      baseLabel:
+        item.portion_id && grams !== null ? gramsLabel(grams) : "100 g",
       kcal: scaledKcal === null ? null : Math.round(scaledKcal),
       fat: lineTotal(unitFat, quantity),
       protein: lineTotal(unitProtein, quantity),
@@ -346,7 +371,10 @@ export async function listMeals(userId: string) {
   return summaries;
 }
 
-export async function getMeal(userId: string, id: string): Promise<MealDetail | null> {
+export async function getMeal(
+  userId: string,
+  id: string,
+): Promise<MealDetail | null> {
   const meal = await query<{ id: string; name: string }>(
     "SELECT id, name FROM meal WHERE id = $1 AND user_id = $2",
     [id, userId],
@@ -374,23 +402,32 @@ export async function getMeal(userId: string, id: string): Promise<MealDetail | 
 
 export async function createMeal(userId: string, name: string) {
   const id = randomUUID();
-  await query(
-    "INSERT INTO meal (id, user_id, name) VALUES ($1, $2, $3)",
-    [id, userId, name],
-  );
+  await query("INSERT INTO meal (id, user_id, name) VALUES ($1, $2, $3)", [
+    id,
+    userId,
+    name,
+  ]);
 
   return id;
 }
 
 export async function renameMeal(userId: string, id: string, name: string) {
-  await query("UPDATE meal SET name = $1 WHERE id = $2 AND user_id = $3", [name, id, userId]);
+  await query("UPDATE meal SET name = $1 WHERE id = $2 AND user_id = $3", [
+    name,
+    id,
+    userId,
+  ]);
 }
 
 export async function removeMeal(userId: string, id: string) {
   await query("DELETE FROM meal WHERE id = $1 AND user_id = $2", [id, userId]);
 }
 
-export async function addMealItem(userId: string, mealIdValue: string, item: ItemRef) {
+export async function addMealItem(
+  userId: string,
+  mealIdValue: string,
+  item: ItemRef,
+) {
   return withTransaction(async (sql) => {
     const meal = await sql(
       "SELECT 1 AS found FROM meal WHERE id = $1 AND user_id = $2",
@@ -456,7 +493,11 @@ export async function addMealItem(userId: string, mealIdValue: string, item: Ite
   });
 }
 
-export async function removeMealItem(userId: string, mealIdValue: string, itemId: string) {
+export async function removeMealItem(
+  userId: string,
+  mealIdValue: string,
+  itemId: string,
+) {
   await query(
     `DELETE FROM meal_item
      WHERE id = $1

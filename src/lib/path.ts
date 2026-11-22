@@ -11,7 +11,9 @@ export function isMainNavActive(pathname: string, href: string) {
   }
 
   if (href === "/saved-ingredients") {
-    return pathname === "/saved-ingredients" || pathname.startsWith("/portions/");
+    return (
+      pathname === "/saved-ingredients" || pathname.startsWith("/portions/")
+    );
   }
 
   if (href === "/meals") {

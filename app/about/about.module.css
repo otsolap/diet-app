@@ -22,7 +22,7 @@
 	width: 100%;
 	height: auto;
 	background-color: var(--color-primary);
-	border: .0625rem solid var(--color-primary-semidark);
+	border: 0.0625rem solid var(--color-primary-semidark);
 	border-radius: 1rem;
 }
 
@@ -31,7 +31,7 @@
 .social {
 	padding: var(--spacing-single);
 	background-color: var(--color-primary);
-	border: .0625rem solid var(--color-primary-semidark);
+	border: 0.0625rem solid var(--color-primary-semidark);
 	border-radius: 1rem;
 }
 

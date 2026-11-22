@@ -3,7 +3,13 @@ import { query } from "@/src/lib/db";
 import type { FoodListEntry } from "@/src/lib/food-list";
 import type { FoodNutrient } from "@/src/lib/food-search";
 import { parseUuid } from "@/src/lib/id";
-import { amountLabel, DETAIL_NUTRIENTS, gramsLabel, kcalFromKj, shareLabel } from "@/src/lib/nutrition";
+import {
+  amountLabel,
+  DETAIL_NUTRIENTS,
+  gramsLabel,
+  kcalFromKj,
+  shareLabel,
+} from "@/src/lib/nutrition";
 
 export type PortionHit = {
   id: string;
@@ -161,7 +167,10 @@ export async function listPortions(userId: string) {
   });
 }
 
-export async function getPortion(userId: string, id: string): Promise<PortionDetail | null> {
+export async function getPortion(
+  userId: string,
+  id: string,
+): Promise<PortionDetail | null> {
   const result = await query<PortionRow>(
     `${PORTION_SELECT}
      WHERE p.id = $1 AND p.user_id = $2`,
@@ -179,7 +188,9 @@ export async function getPortion(userId: string, id: string): Promise<PortionDet
      WHERE food_id = $1 AND component = ANY($2::text[])`,
     [hit.foodId, DETAIL_NUTRIENTS.map((item) => item.code)],
   );
-  const byCode = new Map(values.rows.map((item) => [item.component, item.value]));
+  const byCode = new Map(
+    values.rows.map((item) => [item.component, item.value]),
+  );
 
   return {
     ...hit,
@@ -206,8 +217,15 @@ export async function getPortion(userId: string, id: string): Promise<PortionDet
   };
 }
 
-export async function createPortion(userId: string, foodId: number, name: string, grams: number) {
-  const food = await query("SELECT 1 AS found FROM fineli_food WHERE id = $1", [foodId]);
+export async function createPortion(
+  userId: string,
+  foodId: number,
+  name: string,
+  grams: number,
+) {
+  const food = await query("SELECT 1 AS found FROM fineli_food WHERE id = $1", [
+    foodId,
+  ]);
   if (!food.rows[0]) {
     return null;
   }
@@ -222,7 +240,12 @@ export async function createPortion(userId: string, foodId: number, name: string
   return id;
 }
 
-export async function updatePortion(userId: string, id: string, name: string, grams: number) {
+export async function updatePortion(
+  userId: string,
+  id: string,
+  name: string,
+  grams: number,
+) {
   const result = await query(
     `UPDATE portion
      SET name = $3, grams = $4
@@ -242,7 +265,10 @@ export async function removePortion(userId: string, id: string) {
     return "removed" as const;
   }
 
-  const used = await query("SELECT 1 AS found FROM meal_item WHERE portion_id = $1", [id]);
+  const used = await query(
+    "SELECT 1 AS found FROM meal_item WHERE portion_id = $1",
+    [id],
+  );
   if (used.rows[0]) {
     return "used" as const;
   }

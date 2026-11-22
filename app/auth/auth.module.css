@@ -30,8 +30,8 @@
 .field input {
 	height: 2.5rem;
 	padding: 0 var(--spacing-three-quarters);
-	border: .0625rem solid var(--color-primary-light);
-	border-radius: .5rem;
+	border: 0.0625rem solid var(--color-primary-light);
+	border-radius: 0.5rem;
 	background-color: var(--color-primary-semidark);
 	color: var(--color-white);
 }

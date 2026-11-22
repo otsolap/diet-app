@@ -22,7 +22,9 @@ function getPool() {
 let schemaReady: Promise<void> | null = null;
 
 function ensureSchema() {
-  schemaReady ??= getPool().query(`
+  schemaReady ??= getPool()
+    .query(
+      `
     CREATE TABLE IF NOT EXISTS users (
       id uuid PRIMARY KEY,
       email text NOT NULL UNIQUE,
@@ -148,13 +150,15 @@ function ensureSchema() {
 
     CREATE UNIQUE INDEX IF NOT EXISTS meal_item_portion_key
       ON meal_item (meal_id, portion_id) WHERE portion_id IS NOT NULL;
-  `).then(
-    () => undefined,
-    (error: unknown) => {
-      schemaReady = null;
-      throw error;
-    },
-  );
+  `,
+    )
+    .then(
+      () => undefined,
+      (error: unknown) => {
+        schemaReady = null;
+        throw error;
+      },
+    );
 
   return schemaReady;
 }
@@ -168,10 +172,12 @@ export async function query<T extends QueryResultRow>(
 }
 
 export async function withTransaction<T>(
-  run: (queryInTransaction: <R extends QueryResultRow>(
-    text: string,
-    values?: unknown[],
-  ) => Promise<{ rows: R[] }>) => Promise<T>,
+  run: (
+    queryInTransaction: <R extends QueryResultRow>(
+      text: string,
+      values?: unknown[],
+    ) => Promise<{ rows: R[] }>,
+  ) => Promise<T>,
 ) {
   await ensureSchema();
   const client = await getPool().connect();

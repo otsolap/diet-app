@@ -63,10 +63,13 @@ export function PortionSize({
   const [custom, setCustom] = useState("");
   const selected = units.find((unit) => unit.code === choice);
   const typed = choice === "custom" ? customGrams(custom) : null;
-  const grams = selected ? selected.grams : typed ?? 100;
+  const grams = selected ? selected.grams : (typed ?? 100);
   const per100 = choice === "100" || (choice === "custom" && typed === null);
-  const kcal = kcalPer100 === null ? null : Math.round((kcalPer100 * grams) / 100);
-  const savedName = selected ? selected.label.replace(/ \(.*\)$/, "") : gramsLabel(grams);
+  const kcal =
+    kcalPer100 === null ? null : Math.round((kcalPer100 * grams) / 100);
+  const savedName = selected
+    ? selected.label.replace(/ \(.*\)$/, "")
+    : gramsLabel(grams);
   const savedGrams = gramsInput(grams);
 
   return (
@@ -75,7 +78,10 @@ export function PortionSize({
         {actions}
         <label className={styles.field}>
           Portion size
-          <select value={choice} onChange={(event) => setChoice(event.target.value)}>
+          <select
+            value={choice}
+            onChange={(event) => setChoice(event.target.value)}
+          >
             {units.map((unit) => (
               <option key={unit.code} value={unit.code}>
                 {unit.label}
@@ -127,7 +133,9 @@ export function PortionSize({
                   <th className={styles.macro} scope="row">
                     {item.label}
                   </th>
-                  <td className={styles.amount}>{amountLabel((item.per100 * grams) / 100)}</td>
+                  <td className={styles.amount}>
+                    {amountLabel((item.per100 * grams) / 100)}
+                  </td>
                   <td className={styles.share}>{item.share}</td>
                 </tr>
               ))}
@@ -138,7 +146,11 @@ export function PortionSize({
       ) : null}
       {signedIn ? (
         <div className={styles.saveBlock}>
-          <PortionDialog foodId={foodId} portionName={savedName} portionGrams={savedGrams} />
+          <PortionDialog
+            foodId={foodId}
+            portionName={savedName}
+            portionGrams={savedGrams}
+          />
         </div>
       ) : (
         <div className={styles.saveBlock}>

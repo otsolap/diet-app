@@ -1,7 +1,13 @@
 import { Button } from "@/src/components/button/button";
 import styles from "@/app/foods/foods.module.css";
 
-export function SaveIngredient({ foodId, saved }: { foodId: number; saved: boolean }) {
+export function SaveIngredient({
+  foodId,
+  saved,
+}: {
+  foodId: number;
+  saved: boolean;
+}) {
   const control = saved ? (
     <button className={styles.savedButton} type="button" disabled>
       Saved

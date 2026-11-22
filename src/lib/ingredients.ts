@@ -39,13 +39,15 @@ export async function listSavedIngredients(userId: string) {
       return [];
     }
 
-    return [{
-      id: row.id,
-      name: row.name,
-      kcal: kcalFromKj(row.energy_kj),
-      foodUseClass: row.food_use_class,
-      foodUseParent: row.food_use_parent,
-    }];
+    return [
+      {
+        id: row.id,
+        name: row.name,
+        kcal: kcalFromKj(row.energy_kj),
+        foodUseClass: row.food_use_class,
+        foodUseParent: row.food_use_parent,
+      },
+    ];
   });
 }
 
@@ -72,7 +74,9 @@ export async function isIngredientSaved(userId: string, foodId: number) {
 }
 
 export async function saveIngredient(userId: string, foodId: number) {
-  const food = await query("SELECT 1 AS found FROM fineli_food WHERE id = $1", [foodId]);
+  const food = await query("SELECT 1 AS found FROM fineli_food WHERE id = $1", [
+    foodId,
+  ]);
   if (!food.rows[0]) {
     return "missing" as const;
   }

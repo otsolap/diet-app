@@ -3,7 +3,11 @@ import { redirectTo, requireFormUser } from "@/src/lib/http";
 import { removeIngredient, saveIngredient } from "@/src/lib/ingredients";
 
 function safeReturn(value: string) {
-  if (!value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {
+  if (
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\")
+  ) {
     return null;
   }
 
@@ -12,7 +16,11 @@ function safeReturn(value: string) {
     return null;
   }
 
-  if (path === "/ingredients" || path.startsWith("/ingredients/") || path === "/saved-ingredients") {
+  if (
+    path === "/ingredients" ||
+    path.startsWith("/ingredients/") ||
+    path === "/saved-ingredients"
+  ) {
     return value;
   }
 

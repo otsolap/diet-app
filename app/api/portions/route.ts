@@ -33,7 +33,10 @@ export async function POST(request: Request) {
     const name = portionName(field("name"));
     const grams = portionGrams(field("grams"));
     if (!id || name === null || grams === null) {
-      return redirectTo(request, id ? `/portions/${id}?error=values` : "/saved-ingredients");
+      return redirectTo(
+        request,
+        id ? `/portions/${id}?error=values` : "/saved-ingredients",
+      );
     }
 
     const updated = await updatePortion(user.id, id, name, grams);
@@ -48,7 +51,10 @@ export async function POST(request: Request) {
   const name = portionName(field("name"));
   const grams = portionGrams(field("grams"));
   if (id === null || name === null || grams === null) {
-    return redirectTo(request, id === null ? "/ingredients" : `/ingredients/${id}`);
+    return redirectTo(
+      request,
+      id === null ? "/ingredients" : `/ingredients/${id}`,
+    );
   }
 
   const portion = await createPortion(user.id, id, name, grams);

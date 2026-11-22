@@ -6,7 +6,7 @@
 	margin: var(--spacing-triple) auto 0;
 	padding-bottom: var(--spacing-quintuple);
 	background-color: var(--color-primary-dark);
-	border-top: .0625rem solid var(--color-white);
+	border-top: 0.0625rem solid var(--color-white);
 }
 
 .columns {
@@ -66,7 +66,7 @@
 .legal,
 .legalLink {
 	font-size: 1rem;
-	transition: color .3s cubic-bezier(.4, 0, .2, 1);
+	transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .legalLink {
@@ -91,7 +91,7 @@
 	margin-top: var(--spacing-single);
 	padding-top: var(--spacing-single);
 	padding-bottom: var(--spacing-single);
-	border-top: .125rem solid var(--color-white);
+	border-top: 0.125rem solid var(--color-white);
 }
 
 .subInner {

@@ -1,7 +1,13 @@
 import type { MealLine } from "@/src/lib/meals";
 import styles from "../meals.module.css";
 
-export function QuantityForms({ mealIdValue, line }: { mealIdValue: string; line: MealLine }) {
+export function QuantityForms({
+  mealIdValue,
+  line,
+}: {
+  mealIdValue: string;
+  line: MealLine;
+}) {
   return (
     <div className={styles.stepper}>
       <form className={styles.step} method="post" action="/api/meals">

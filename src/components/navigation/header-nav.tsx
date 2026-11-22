@@ -15,7 +15,9 @@ function Menu({ pathname }: { pathname?: string }) {
         return (
           <Link
             key={link.href}
-            className={current ? `${styles.link} ${styles.linkActive}` : styles.link}
+            className={
+              current ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
             href={link.href}
             aria-current={current ? "page" : undefined}
           >

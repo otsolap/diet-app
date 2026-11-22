@@ -15,7 +15,11 @@ function hasSession(request: NextRequest) {
 }
 
 function isPublicPage(pathname: string) {
-  if (PUBLIC_PAGES.has(pathname) || pathname === "/ingredients" || /^\/ingredients\/[^/]+$/.test(pathname)) {
+  if (
+    PUBLIC_PAGES.has(pathname) ||
+    pathname === "/ingredients" ||
+    /^\/ingredients\/[^/]+$/.test(pathname)
+  ) {
     return true;
   }
 
@@ -23,7 +27,10 @@ function isPublicPage(pathname: string) {
 }
 
 function signInRedirect(request: NextRequest) {
-  return NextResponse.redirect(new URL("/login?error=signedout", request.url), 303);
+  return NextResponse.redirect(
+    new URL("/login?error=signedout", request.url),
+    303,
+  );
 }
 
 export function proxy(request: NextRequest) {
@@ -41,7 +48,9 @@ export function proxy(request: NextRequest) {
   }
 
   if (pathname === "/saved") {
-    const target = hasSession(request) ? "/saved-ingredients" : "/login?error=signedout";
+    const target = hasSession(request)
+      ? "/saved-ingredients"
+      : "/login?error=signedout";
     return NextResponse.redirect(new URL(target, request.url), 307);
   }
 
@@ -58,7 +67,10 @@ export function proxy(request: NextRequest) {
       return signInRedirect(request);
     }
 
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   if (isPublicPage(pathname)) {
@@ -69,5 +81,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
+  matcher: [
+    "/((?!_next/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
 };

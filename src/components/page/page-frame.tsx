@@ -26,6 +26,14 @@ export function PageFallback({ title }: { title: string }) {
   );
 }
 
-export function DynamicPage({ title, children }: { title: string; children: ReactNode }) {
-  return <Suspense fallback={<PageFallback title={title} />}>{children}</Suspense>;
+export function DynamicPage({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Suspense fallback={<PageFallback title={title} />}>{children}</Suspense>
+  );
 }

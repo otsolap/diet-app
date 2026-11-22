@@ -63,7 +63,11 @@ export function PortionDialog({
             Close
           </button>
         </div>
-        <form className={styles.portionForm} method="post" action="/api/portions">
+        <form
+          className={styles.portionForm}
+          method="post"
+          action="/api/portions"
+        >
           <input type="hidden" name="foodId" value={foodId} />
           <TextField
             inputRef={nameRef}

@@ -46,13 +46,19 @@ async function InviteForm({
       <ErrorText message={message} />
       {inviteUrl && invite ? (
         <p className={styles.link}>
-          Open this address to set a password for {invite.email}. Do not use
-          the sign-in page yet.{" "}
-          <Link href={inviteUrl}>{inviteUrl}</Link>
+          Open this address to set a password for {invite.email}. Do not use the
+          sign-in page yet. <Link href={inviteUrl}>{inviteUrl}</Link>
         </p>
       ) : null}
       <form className={styles.form} method="post" action="/api/auth/invite">
-        <TextField className={styles.field} label="Email" name="email" type="email" autoComplete="email" required />
+        <TextField
+          className={styles.field}
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+        />
         <Button className={styles.submit}>Create invite link</Button>
       </form>
       <Link href="/">Back</Link>

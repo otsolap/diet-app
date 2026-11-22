@@ -5,7 +5,11 @@ import styles from "@/app/foods/foods.module.css";
 import { Button } from "@/src/components/button/button";
 import { RemoveButton } from "@/src/components/form/remove-button";
 import { TextField } from "@/src/components/form/text-field";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { MissingNote } from "@/src/components/page/missing-note";
 import { FoodCategoryIcon } from "@/src/components/food-list/food-category-icon";
 import { requireUser } from "@/src/lib/auth";
@@ -19,10 +23,18 @@ export const metadata: Metadata = {
 };
 
 function PortionMissing() {
-  return <MissingNote title="Portion not found" message="That portion is not available." />;
+  return (
+    <MissingNote
+      title="Portion not found"
+      message="That portion is not available."
+    />
+  );
 }
 
-async function PortionView({ params, searchParams }: PageProps<"/portions/[id]">) {
+async function PortionView({
+  params,
+  searchParams,
+}: PageProps<"/portions/[id]">) {
   await connection();
   const user = await requireUser();
   const { id } = await params;
@@ -40,12 +52,16 @@ async function PortionView({ params, searchParams }: PageProps<"/portions/[id]">
   return (
     <PageMain>
       <div className={styles.titleRow}>
-        <FoodCategoryIcon category={portion.foodUseClass} className={styles.categoryIcon} />
+        <FoodCategoryIcon
+          category={portion.foodUseClass}
+          className={styles.categoryIcon}
+        />
         <PageTitle>{portion.name}</PageTitle>
       </div>
       <p className={styles.foodId}>{portion.gramsLabel}</p>
       <p className={styles.source}>
-        From <Link href={`/ingredients/${portion.foodId}`}>{portion.foodName}</Link>
+        From{" "}
+        <Link href={`/ingredients/${portion.foodId}`}>{portion.foodName}</Link>
       </p>
       <form className={styles.form} method="post" action="/api/portions">
         <input type="hidden" name="intent" value="update" />
@@ -75,9 +91,7 @@ async function PortionView({ params, searchParams }: PageProps<"/portions/[id]">
       {firstQueryValue(query.error) === "values" ? (
         <p className={styles.error}>Enter a name and a weight in grams.</p>
       ) : null}
-      <p className={styles.kcal}>
-        {formatKcal(portion.kcal)}
-      </p>
+      <p className={styles.kcal}>{formatKcal(portion.kcal)}</p>
       <RemoveButton
         action="/api/portions"
         idName="portionId"

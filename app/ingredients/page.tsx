@@ -6,7 +6,11 @@ import { searchFoods } from "@/src/lib/food-search";
 import { listSavedFoodIds } from "@/src/lib/ingredients";
 import { firstQueryValue } from "@/src/lib/query";
 import { portionEntry, searchPortions } from "@/src/lib/portions";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { FoodPages, pageHref } from "./food-pages";
 import styles from "@/app/foods/foods.module.css";
 
@@ -34,7 +38,10 @@ async function viewerFoods(term: string) {
       searchPortions(user.id, term).catch(() => []),
     ]);
 
-    return { savedIds: new Set(savedIds), portions: portions.map(portionEntry) };
+    return {
+      savedIds: new Set(savedIds),
+      portions: portions.map(portionEntry),
+    };
   } catch {
     return { savedIds: new Set<number>(), portions: [] };
   }
@@ -47,12 +54,17 @@ async function FoodSearch({
 
   const params = await searchParams;
   const term = firstQueryValue(params.q)?.trim() ?? "";
-  const result = term ? await searchFoods(term, pageNumber(firstQueryValue(params.page))) : null;
+  const result = term
+    ? await searchFoods(term, pageNumber(firstQueryValue(params.page)))
+    : null;
   const error = result && "error" in result ? result.error : null;
   const foods = result && "foods" in result ? result.foods : [];
   const page = result && "page" in result ? result.page : 1;
   const pageCount = result && "pageCount" in result ? result.pageCount : 0;
-  const viewer = term && !error ? await viewerFoods(term) : { savedIds: new Set<number>(), portions: [] };
+  const viewer =
+    term && !error
+      ? await viewerFoods(term)
+      : { savedIds: new Set<number>(), portions: [] };
   const rows = [...foods, ...viewer.portions];
 
   return (
@@ -61,21 +73,51 @@ async function FoodSearch({
       <form className={styles.searchForm} method="get" action="/ingredients">
         <label className={styles.searchField}>
           <span className={styles.srOnly}>Search</span>
-          <svg className={styles.searchIcon} viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
-            <path d="M15.5 15.5L20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <svg
+            className={styles.searchIcon}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle
+              cx="10.5"
+              cy="10.5"
+              r="6.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <path
+              d="M15.5 15.5L20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
-          <input name="q" type="search" defaultValue={term} maxLength={80} placeholder="Search" required />
+          <input
+            name="q"
+            type="search"
+            defaultValue={term}
+            maxLength={80}
+            placeholder="Search"
+            required
+          />
         </label>
       </form>
       {error ? <p className={styles.error}>{error}</p> : null}
       {rows.length > 0 ? (
         <>
-          <FoodList foods={rows} savedIds={viewer.savedIds} returnTo={term ? pageHref(term, page) : undefined} />
+          <FoodList
+            foods={rows}
+            savedIds={viewer.savedIds}
+            returnTo={term ? pageHref(term, page) : undefined}
+          />
           <FoodPages term={term} page={page} pageCount={pageCount} />
         </>
       ) : null}
-      {term && !error && rows.length === 0 ? <p>No foods match that search.</p> : null}
+      {term && !error && rows.length === 0 ? (
+        <p>No foods match that search.</p>
+      ) : null}
     </PageMain>
   );
 }

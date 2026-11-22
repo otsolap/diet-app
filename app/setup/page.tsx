@@ -36,7 +36,14 @@ async function SetupForm({
       <ErrorText message={message} />
       {ownerEmail ? (
         <form className={styles.form} method="post" action="/api/auth/setup">
-          <TextField className={styles.field} label="Email" name="email" type="email" autoComplete="email" required />
+          <TextField
+            className={styles.field}
+            label="Email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+          />
           <TextField
             className={styles.field}
             label="Password"
@@ -69,7 +76,11 @@ async function SetupForm({
 
 export default function SetupPage({ searchParams }: PageProps<"/setup">) {
   return (
-    <Suspense fallback={<AuthShell title="Create the owner account">Loading.</AuthShell>}>
+    <Suspense
+      fallback={
+        <AuthShell title="Create the owner account">Loading.</AuthShell>
+      }
+    >
       <SetupForm searchParams={searchParams} />
     </Suspense>
   );

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import styles from "@/app/foods/foods.module.css";
-import { DynamicPage, PageMain, PageTitle } from "@/src/components/page/page-frame";
+import {
+  DynamicPage,
+  PageMain,
+  PageTitle,
+} from "@/src/components/page/page-frame";
 import { SavedFoodList } from "@/src/components/food-list/saved-food-list";
 import { requireUser } from "@/src/lib/auth";
 import { listSavedIngredients } from "@/src/lib/ingredients";
@@ -28,7 +32,9 @@ async function SavedIngredients({
     <PageMain>
       <PageTitle>Ingredients</PageTitle>
       {firstQueryValue(params.error) === "used" ? (
-        <p className={styles.error}>That portion is in a meal. Remove it from the meal first.</p>
+        <p className={styles.error}>
+          That portion is in a meal. Remove it from the meal first.
+        </p>
       ) : null}
       {foods.length > 0 ? (
         <div className={styles.controls}>

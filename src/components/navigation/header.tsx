@@ -70,7 +70,11 @@ export function Header() {
           </Link>
           {slogan ? <p className={styles.slogan}>{slogan}</p> : null}
         </div>
-        <AccountSlot className={buttonClass} slotClassName={`${styles.account} ${styles.accountBar}`} fallback={null} />
+        <AccountSlot
+          className={buttonClass}
+          slotClassName={`${styles.account} ${styles.accountBar}`}
+          fallback={null}
+        />
       </header>
       <nav className={styles.nav} aria-label="Primary">
         <div className={styles.navInner}>

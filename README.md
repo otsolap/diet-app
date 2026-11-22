@@ -54,7 +54,6 @@ Food data: Finnish Institute for Health and Welfare, [Fineli](https://fineli.fi/
 
 These pages stay open without a session: `/`, `/about`, `/login`, `/setup`, `/ingredients`, `/ingredients/{id}`, and `/invite/{token}`. Other pages redirect to `/login`. `/foods` redirects to `/ingredients`.
 
-
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 20.9 or later
@@ -87,14 +86,14 @@ Stop Postgres with:
 docker compose stop
 ```
 
-| Command | What it does |
-| --- | --- |
-| `docker compose up -d` | Start Postgres |
-| `docker compose stop` | Stop Postgres |
-| `npm run dev` | Start the development server |
-| `npm run lint` | Run ESLint |
-| `npm run build` | Create a production build |
-| `npm run start` | Serve the production build |
+| Command                | What it does                 |
+| ---------------------- | ---------------------------- |
+| `docker compose up -d` | Start Postgres               |
+| `docker compose stop`  | Stop Postgres                |
+| `npm run dev`          | Start the development server |
+| `npm run lint`         | Run ESLint                   |
+| `npm run build`        | Create a production build    |
+| `npm run start`        | Serve the production build   |
 
 The app reads `DATABASE_URL` from `.env`.
 
@@ -113,6 +112,3 @@ The app creates its tables on the first visit.
 The application code is [MIT](LICENSE). Copyright (c) 2026 [Otso Lappalainen](https://varangianventure.com/).
 
 The Fineli food data is not part of that license. Food data: Finnish Institute for Health and Welfare, [Fineli](https://fineli.fi/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-
-
-

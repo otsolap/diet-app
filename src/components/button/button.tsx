@@ -11,8 +11,11 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary";
 }) {
-  const variantClass = variant === "secondary" ? styles.secondary : styles.primary;
-  const classes = className ? `${styles.button} ${variantClass} ${className}` : `${styles.button} ${variantClass}`;
+  const variantClass =
+    variant === "secondary" ? styles.secondary : styles.primary;
+  const classes = className
+    ? `${styles.button} ${variantClass} ${className}`
+    : `${styles.button} ${variantClass}`;
 
   return <button className={classes} type={type} {...props} />;
 }

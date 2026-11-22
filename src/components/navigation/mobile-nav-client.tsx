@@ -11,8 +11,21 @@ const TABS = mainNav;
 function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M15.5 15.5L20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle
+        cx="10.5"
+        cy="10.5"
+        r="6.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M15.5 15.5L20 20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -48,7 +61,13 @@ function MealsIcon() {
         strokeWidth="2"
         strokeLinecap="round"
       />
-      <path d="M12 6.2v2.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M12 6.2v2.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -94,7 +113,9 @@ export function MobileNavClient() {
 
           return (
             <Link
-              className={current ? `${styles.link} ${styles.linkActive}` : styles.link}
+              className={
+                current ? `${styles.link} ${styles.linkActive}` : styles.link
+              }
               href={tab.href}
               aria-current={current ? "page" : undefined}
               key={tab.href}
